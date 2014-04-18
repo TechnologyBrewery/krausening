@@ -35,7 +35,7 @@ public interface KrauseningConfig extends Config {
 	}
 
 	/**
-	 * Specifies the load and merge policy to use when loading 
+	 * Specifies the merge policy to use when loading multiple property files from Krausening.
 	 */
 	@Retention(RUNTIME)
 	@Target(TYPE)
