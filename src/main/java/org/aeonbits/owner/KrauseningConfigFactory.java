@@ -8,8 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 
 import org.aeonbits.owner.loaders.Loader;
-
-import com.ask.krausening.Krausening;
+import org.bitbucket.krausening.Krausening;
 
 /**
  * {@link KrauseningConfigFactory} is largely modeled after {@link ConfigFactory} and provides a simple, straightforward

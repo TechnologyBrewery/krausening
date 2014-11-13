@@ -1,4 +1,4 @@
-package com.ask.krausening;
+package org.bitbucket.krausening;
 
 import java.io.File;
 import java.io.FileReader;

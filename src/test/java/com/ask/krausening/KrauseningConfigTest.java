@@ -18,6 +18,7 @@ import org.aeonbits.owner.KrauseningConfig;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.aeonbits.owner.KrauseningConfigFactory;
 import org.apache.commons.io.IOUtils;
+import org.bitbucket.krausening.Krausening;
 import org.junit.Before;
 import org.junit.Test;
 

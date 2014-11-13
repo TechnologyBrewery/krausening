@@ -13,8 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.aeonbits.owner.KrauseningConfig.KrauseningMergePolicy;
 import org.aeonbits.owner.KrauseningConfig.KrauseningMergePolicy.KrauseningMergePolicyType;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
-
-import com.ask.krausening.Krausening;
+import org.bitbucket.krausening.Krausening;
 
 /**
  * {@link KrauseningAwarePropertiesManager} replaces the default URL-based property file specification strategy that is
