@@ -1,5 +1,5 @@
 # Krausening - Externalized Property Management and Access #
-In brewing, krausening (KROI-zen-ing) refers to adding a small amount of fresh wort to prime finished beer for carbonation.  In Java, Krausening is a project to populate finished archives for deployment.  This approach allows Properties files to be externalized from deployment units, enabling the same deployment unit to be leveraged repeatedly without the need to rebuild or hack the archive.
+In brewing, krausening (KROI-zen-ing) refers to adding a small amount of existing wort to prime finished beer for carbonation.  In Java, Krausening is a project to populate finished archives for deployment.  This approach allows Properties files to be externalized from deployment units, enabling the same deployment unit to be leveraged repeatedly without the need to rebuild or hack the archive.
 
 # Krausening in One Pint (Learn Krausening in 2 Minutes)#
 Krausening is very simple.  Follow these steps to prime your project:
