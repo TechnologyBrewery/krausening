@@ -48,7 +48,7 @@ Properties properties = krausening.getProperties("example.properties");
 assertEquals(properties.get("propertyA"), "org.bitbucket.some.reflect.Class");
 assertEquals(properties.get("propertyB"), "https://prodUrl/");
 ```
-4.) You're done - try a mystery beer with Krausening's encryption integration to further quinch yoru thrist.
+4.) You're done - try a mystery beer with Krausening's encryption integration to further quench your thirst.
 
 # Krausening in Three Pints (Leveraging Jasypt for Encrypting/Decrypting Properties)#
 Frequently, it is useful to store encrypted information within properties files.  Krausening optionally leverages Jasypt to allow stored properties to be encrypted at rest while also decrypting property values as they are read without manual interaction.
@@ -72,6 +72,7 @@ Krausening krausening = Krausening.getInstance();
 krausening.loadProperties();
 Properties properties = krausening.getProperties("encrypted.properties");
 assertEquals(properties.get("password"), "someStrongPassword");
+```
 
 4.) You're done - go for the whole sampler with Krausening's Owner integration if you're still thirsty.
 
