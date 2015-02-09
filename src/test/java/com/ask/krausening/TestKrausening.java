@@ -11,19 +11,17 @@ import org.junit.Test;
 
 public class TestKrausening extends AbstractKrauseningTest {
 
-	private static final String VALUE_NEW_VALUE = "new.value";
-	private static final String KEY_NEWLY_ADDED_IN_EXTENSIONS = "newly.added.in.extensions";
-	private static final String NONEXISTENT_LOCATION = "./src/test/resources/does-not-exist";
-	private static final String EMPTY_LOCATION = "./src/test/resources/empty";
-	private static final String NOT_JUST_PROPERTIES_FILES_LOCATION = "./src/test/resources/not-just-properties-files";
-	private static final String NO_LOCATION = "";
-	private static final String EMPTY_PROPERTIES = "empty.properties";
+	protected static final String VALUE_NEW_VALUE = "new.value";
+	protected static final String KEY_NEWLY_ADDED_IN_EXTENSIONS = "newly.added.in.extensions";
+	protected static final String NONEXISTENT_LOCATION = "./src/test/resources/does-not-exist";
+	protected static final String EMPTY_LOCATION = "./src/test/resources/empty";
+	protected static final String NOT_JUST_PROPERTIES_FILES_LOCATION = "./src/test/resources/not-just-properties-files";
+	protected static final String NO_LOCATION = "";
+	protected static final String EMPTY_PROPERTIES = "empty.properties";
 
 	@Test
 	public void testBaseLocationFileRead() {
-		System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, NO_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(BASE_PROPERTIES_LOCATION, NO_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		assertNotNull(properties);
@@ -32,9 +30,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testBaseLocationPropertyRead() {
-		System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, NO_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(BASE_PROPERTIES_LOCATION, NO_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		Object value = properties.get(FOO_PROPERTY_KEY);
@@ -44,9 +40,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testExtensionLocationPropertyReadOfNonOverridenValue() {
-		System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(BASE_PROPERTIES_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		Object value = properties.get(FOO_PROPERTY_KEY);
@@ -56,9 +50,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testExtensionLocationPropertyReadOfOverridenValue() {
-		System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(BASE_PROPERTIES_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		Object value = properties.get("override.me");
@@ -68,9 +60,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testExtensionLocationPropertyReadOfNewValue() {
-		System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(BASE_PROPERTIES_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		Object value = properties.get(KEY_NEWLY_ADDED_IN_EXTENSIONS);
@@ -80,9 +70,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testFileReadWithoutAnyLocation() {
-		System.setProperty(Krausening.BASE_LOCATION, NO_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, NO_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(NO_LOCATION, NO_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		assertNull(properties);
@@ -91,9 +79,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testFileReadWithNonexistantBaseLocation() {
-		System.setProperty(Krausening.BASE_LOCATION, NONEXISTENT_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, NO_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(NONEXISTENT_LOCATION, NO_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		assertNull(properties);
@@ -102,9 +88,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testFileReadWithNonexistantExtensionsLocation() {
-		System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, NONEXISTENT_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(BASE_PROPERTIES_LOCATION, NONEXISTENT_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		Object value = properties.get(KEY_NEWLY_ADDED_IN_EXTENSIONS);
@@ -114,9 +98,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testFileReadOfEmptyProperties() {
-		System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, NO_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(BASE_PROPERTIES_LOCATION, NO_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EMPTY_PROPERTIES);
 		Object value = properties.get(KEY_NEWLY_ADDED_IN_EXTENSIONS);
@@ -126,9 +108,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testFileReadWithEmptyBaseLocation() {
-		System.setProperty(Krausening.BASE_LOCATION, EMPTY_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, NO_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(EMPTY_LOCATION, NO_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		assertNull(properties);
@@ -137,9 +117,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testFileReadWithEmptyExtensionsLocation() {
-		System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, EMPTY_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(BASE_PROPERTIES_LOCATION, EMPTY_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(EXAMPLE_PROPERTIES_FILE_NAME);
 		Object value = properties.get(FOO_PROPERTY_KEY);
@@ -149,9 +127,7 @@ public class TestKrausening extends AbstractKrauseningTest {
 
 	@Test
 	public void testFileLoadingWhenNonPropertiesFilesPresent() {
-		System.setProperty(Krausening.BASE_LOCATION, NOT_JUST_PROPERTIES_FILES_LOCATION);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, EMPTY_LOCATION);
-		Krausening krausening = Krausening.getInstance();
+		Krausening krausening = getKrausening(NOT_JUST_PROPERTIES_FILES_LOCATION, EMPTY_LOCATION);
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties("some-other-configuration-file.xml");
 		assertNull(properties);

@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.properties.EncryptableProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,9 @@ public final class Krausening {
 	/** Location of a set of extension {@link Properties} files. */
 	public static final String EXTENSIONS_LOCATION = "KRAUSENING_EXTENSIONS";
 	
+	/** Value of a set a master encryption password. */
+	public static final String KRAUSENING_PASSWORD = "KRAUSENING_PASSWORD";
+	
 	/** Contains the set of all properties managed by the base + extension locations. */
 	private Map<String, Properties> managedProperties;
 	
@@ -49,6 +54,9 @@ public final class Krausening {
 	
 	/** The location which contains extension properties. */
 	private String extensionsLocation;
+	
+	/** Whether or not KRAUSENING_PASSWORD is non-blank. */
+	private boolean hasMasterPassword;
 	
 	/** Singleton instance of this class. */
 	private static Krausening instance = new Krausening();
@@ -82,6 +90,8 @@ public final class Krausening {
 		
 		boolean hasLocations = setLocations();
 		
+		setEncryptionFoundation();
+		
 		if (hasLocations) {
 			File baseLocationAsFile = new File(baseLocation);
 			if (baseLocationAsFile.exists()) {
@@ -107,6 +117,17 @@ public final class Krausening {
 		long stop = System.currentTimeMillis();
 		LOGGER.debug("Loaded Krausening properties in " + (stop - start) + "ms");
 		
+	}
+	
+	protected void setEncryptionFoundation() {
+		String masterPassword = System.getProperty(KRAUSENING_PASSWORD);
+		if (StringUtils.isBlank(masterPassword)) {
+			LOGGER.warn("No " + KRAUSENING_PASSWORD + " set, Krausening will not support encrypted property values!");
+			
+		} else {
+			LOGGER.error(KRAUSENING_PASSWORD + " configured, Krausening will support encrypted property values.");
+			hasMasterPassword = true;
+		}
 	}
 
 	/**
@@ -165,7 +186,8 @@ public final class Krausening {
 			for (File file : files) {
 				try {
 					fileName = file.getName();
-					fileProperties = (managedProperties.containsKey(fileName)) ? managedProperties.get(fileName) : new Properties();
+					fileProperties = (managedProperties.containsKey(fileName)) 
+							? managedProperties.get(fileName) : createEmptyProperties();
 					fileReader = new FileReader(file);
 					fileProperties.load(fileReader);
 					managedProperties.put(fileName, fileProperties);
@@ -179,6 +201,26 @@ public final class Krausening {
 				}				
 			}			
 		}
+	}
+	
+	/**
+	 * Creates an empty Properties file, either standard or encrypted, based on whether or not the master password
+	 * is set.
+	 * @return An empty properties instance
+	 */
+	private Properties createEmptyProperties() {
+		Properties properties;
+		if (hasMasterPassword) {
+			//TODO: could externalize this so the type is configurable:
+			StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+			encryptor.setPassword(System.getProperty(KRAUSENING_PASSWORD));			
+			properties = new EncryptableProperties(encryptor);
+			
+		} else {
+			properties = new Properties();
+		}
+		
+		return properties;
 	}
 		
 	/**
