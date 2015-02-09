@@ -78,3 +78,7 @@ assertEquals(properties.get("password"), "someStrongPassword");
 
 # Krausening in Four Pints (Leveraging Owner Integration to Access Properties via Interfaces (and more))#
 To be completed
+
+# Last Call
+
+You're now 4 pints in and ready for how ever many more property files you need without having to worry about stumbling through deployment!
