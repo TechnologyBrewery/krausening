@@ -125,7 +125,7 @@ public final class Krausening {
 			LOGGER.warn("No " + KRAUSENING_PASSWORD + " set, Krausening will not support encrypted property values!");
 			
 		} else {
-			LOGGER.error(KRAUSENING_PASSWORD + " configured, Krausening will support encrypted property values.");
+			LOGGER.warn(KRAUSENING_PASSWORD + " configured, Krausening will support encrypted property values.");
 			hasMasterPassword = true;
 		}
 	}
