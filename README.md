@@ -25,7 +25,7 @@ Often, some properties need to change as your deployment unit travels between en
 1.)  Add a Java System Property called KRAUSENING_EXTENSION pointing to the folder with your extension .properties files
 ```
 #!bash
-KRAUSENING_BASE=./src/test/resources/prod-env
+KRAUSENING_EXTENSION=./src/test/resources/prod-env
 ```
 2.) Create a properties file of the same name as the one in base, only added the properties you want to extend:
 
