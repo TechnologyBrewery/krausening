@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory;
  * externalized from deployment units, enabling the same deployment unit to be leveraged repeatedly without the need to rebuild 
  * or hacking the archive.
  * 
- * To use, you need to minimally set a system property "KRAUSENING_BASE", which points to a directory where your {@link Proeprties}
+ * To use, you need to minimally set a system property "KRAUSENING_BASE", which points to a directory where your {@link Properties}
  * files will be located.  Krausening will load those up and make them available via the {@code getProperties(<file name>)} method.
  * 
- * You can then use a system property called "KRAUSENING_EXTENSIONS" to set up extensions to the {@link Proeprties} files located 
+ * You can then use a system property called "KRAUSENING_EXTENSIONS" to set up extensions to the {@link Properties} files located 
  * in "KRAUSENING_BASE".  The first the base properties will be loaded, with anything in the extensions location being added on 
  * to the top.  This allows value to be added or overridden, which is especially useful when you have a standard configuration
  * defined in your base files, but need to specialize some values for different deployments.
