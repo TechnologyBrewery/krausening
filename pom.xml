@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bitbucket.askllc.krausening</groupId>
 	<artifactId>krausening</artifactId>
-	<version>3-SNAPSHOT</version>
+	<version>3</version>
 	<packaging>jar</packaging>
 
 	<name>Krausening</name>
@@ -41,7 +40,8 @@
 		<connection>scm:git:ssh://git@bitbucket.org/askllc/krausening.git</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/askllc/krausening.git</developerConnection>
 		<url>https://bitbucket.org/askllc/krausening.git</url>
-	</scm>
+	  <tag>krausening-3</tag>
+  </scm>
 
 	<properties>
 		<slf4j.version>1.7.5</slf4j.version>
