@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bitbucket.askllc.krausening</groupId>
 	<artifactId>krausening</artifactId>
-	<version>3</version>
+	<version>4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Krausening</name>
@@ -40,7 +40,7 @@
 		<connection>scm:git:ssh://git@bitbucket.org/askllc/krausening.git</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/askllc/krausening.git</developerConnection>
 		<url>https://bitbucket.org/askllc/krausening.git</url>
-	  <tag>krausening-3</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<properties>
