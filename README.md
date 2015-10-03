@@ -82,3 +82,16 @@ To be completed
 # Last Call
 
 You're now 4 pints in and ready for how ever many more property files you need without having to worry about stumbling through deployment!
+
+# Distribution Channel
+
+Want Krausening in your project? The following Maven dependency will add it to your Maven project from the Maven Central Repository:
+
+```
+#!xml
+<dependency>
+    <groupId>org.bitbucket.askllc.krausening</groupId>
+    <artifactId>krausening</artifactId>
+    <version>3</version>
+</dependency>
+```
