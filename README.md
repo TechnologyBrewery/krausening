@@ -95,3 +95,9 @@ Want Krausening in your project? The following Maven dependency will add it to y
     <version>3</version>
 </dependency>
 ```
+
+## Licensing
+Krausening is available under the [MIT License](http://opensource.org/licenses/mit-license.php).
+
+## Session Beer
+Krausening would like to thank [Counterpointe Solutions](http://cpointe-inc.com/) for providing continuous integration and static code analysis services for Krausening.
