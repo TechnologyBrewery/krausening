@@ -82,6 +82,7 @@ While accessing properties via `java.util.Properties` as `String` values works, 
 fibonacci=1, 1, 2, 3, 5, 8
 url=https://localhost
 serviceSubPath=https://prodUrl
+
 # in $KRAUSENING_EXTENSIONS/example.properties:
 url=https://prodUrl
 fullServiceUrl=${url}/${serviceSubPath}/endpoint
