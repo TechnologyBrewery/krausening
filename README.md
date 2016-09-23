@@ -13,14 +13,13 @@ KRAUSENING_BASE=./src/test/resources/base
 ```
 #!java
 Krausening krausening = Krausening.getInstance();
-krausening.loadProperties();
 Properties properties = krausening.getProperties("example.properties");
 
 ```
 3.)  You're done - order your next pint!
 
 # Krausening in Two Pints (Leveraging Property Extension)#
-Often, some properties need to change as your deployment unit travels between environments.  We want to do this without having to copy and paste all the properties, lowering our maintenance burden to just those properties that have changed.  To due this, build on the prior example by:
+Often, some properties need to change as your deployment unit travels between environments.  We want to do this without having to copy and paste all the properties, lowering our maintenance burden to just those properties that have changed.  To accomplish this, build on the prior example by:
 
 1.)  Add a Java System Property called KRAUSENING_EXTENSION pointing to the folder with your extension .properties files
 ```
@@ -43,7 +42,6 @@ propertyB=https://prodUrl/
 ```
 #!java
 Krausening krausening = Krausening.getInstance();
-krausening.loadProperties();
 Properties properties = krausening.getProperties("example.properties");
 assertEquals(properties.get("propertyA"), "org.bitbucket.some.reflect.Class");
 assertEquals(properties.get("propertyB"), "https://prodUrl/");
@@ -77,8 +75,50 @@ assertEquals(properties.get("password"), "someStrongPassword");
 4.) You're done - go for the whole sampler with Krausening's Owner integration if you're still thirsty.
 
 # Krausening in Four Pints (Leveraging Owner Integration to Access Properties via Interfaces (and more))#
-To be completed
+While accessing properties via `java.util.Properties` as `String` values works, wouldn't it be great if we could get compile-safe, strongly typed references to our Krausening property values that reflect their actual type? By integrating tightly with [Owner](http://owner.aeonbits.org/), Krausening can offer annotation-based type conversion, variable expansion, hot reloading, XML property file support, and all of the other great features that are built into Owner. Assuming that we have the following properties files created: 
+```
+#!bash
+# in $KRAUSENING_BASE/example.properties:
+fibonacci=1, 1, 2, 3, 5, 8
+url=https://localhost
+serviceSubPath=https://prodUrl
+# in $KRAUSENING_EXTENSIONS/example.properties:
+url=https://prodUrl
+fullServiceUrl=${url}/${serviceSubPath}/endpoint
+pi=3.1415
+```
 
+1.) Create an interface that describes and maps to the contents of the collapsed version of `example.properties`.  Code that relies on these property values will be able to directly use this interface, instead of interacting with a `java.util.Properties` object. The interface must contain a `@KrauseningSources` definition, along with any supported Owner annotation:
+```
+#!java
+@KrauseningSources("example.properties")
+public interface ExampleConfig extends KrauseningConfig {
+  @Key("fibonacci")
+  List<Integer> getFibonacciSeq();
+
+  @Key("fullUrl")
+  URL getFullUrl();
+
+  @Key("pi")
+  double getPi();
+
+  @Key("not-defined-in-prop-file")
+  @Default("1234")
+  int getInt();
+}
+```
+
+2.) Access properties via the newly created interface:
+```
+#!java
+ExampleConfig config = KrauseningConfigFactory.create(ExampleConfig.class);
+assertEquals(3, config.getFibonacciSeq().get(3));
+assertEquals(new URL("https://prodUrl/foo/baz/endpoint"), config.getFullUrl());
+assertEquals(3.1415d, config.getPi());
+assertEquals(1234, config.getInt());
+```
+
+3.) Check out `KrauseningConfigTest` in `src/test/java` and/or the Owner documentation for additional information on how to best utilize the Krausening-Owner integration.
 # Last Call
 
 You're now 4 pints in and ready for how ever many more property files you need without having to worry about stumbling through deployment!
