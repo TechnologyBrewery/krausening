@@ -1,6 +1,7 @@
 package org.aeonbits.owner;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,7 +14,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.aeonbits.owner.KrauseningConfig.KrauseningMergePolicy;
 import org.aeonbits.owner.KrauseningConfig.KrauseningMergePolicy.KrauseningMergePolicyType;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
+import org.apache.commons.lang3.StringUtils;
 import org.bitbucket.krausening.Krausening;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link KrauseningAwarePropertiesManager} replaces the default URL-based property file specification strategy that is
@@ -26,6 +30,8 @@ import org.bitbucket.krausening.Krausening;
 class KrauseningAwarePropertiesManager extends PropertiesManager {
 
 	private static final long serialVersionUID = 8372096321097307057L;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(KrauseningAwarePropertiesManager.class);
 
 	private List<String> krauseningPropertyFileNames;
 	private KrauseningMergePolicyType mergePolicyType;
@@ -54,7 +60,7 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 			try {
 				this.krauseningHotReloadLogic = new HotReloadLogic(krauseningHotReload,
 						getKrauseningPropertyFileURLs(this.krauseningPropertyFileNames), this);
-			} catch (MalformedURLException exception) {
+			} catch (IOException exception) {
 				throw new RuntimeException("Could not configure hot reload support for Krausening files", exception);
 			}
 
@@ -117,13 +123,28 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 	 * @param krauseningPropertyFileNames
 	 *            file names of the properties that are managed by {@link Krausening}.
 	 * @return {@link List} of {@link URL}s that map to the physical property files managed by {@link Krausening}.
-	 * @throws MalformedURLException
+	 * @throws IOException
 	 */
 	private List<URL> getKrauseningPropertyFileURLs(List<String> krauseningPropertyFileNames)
-			throws MalformedURLException {
+			throws IOException {
+	    String baseLocationProperty = System.getProperty(Krausening.BASE_LOCATION);
+	    String extensionsLocationProperty = System.getProperty(Krausening.EXTENSIONS_LOCATION);
+	    
+	    if (StringUtils.isBlank(baseLocationProperty)) {
+	        baseLocationProperty = File.createTempFile("krausening-base", "tmp").getParentFile().getCanonicalPath();
+	        LOGGER.warn("No " + Krausening.BASE_LOCATION + " set! Default to " + baseLocationProperty);
+	    }
+	    
+	    if (StringUtils.isBlank(extensionsLocationProperty)) {
+	        extensionsLocationProperty = File.createTempFile("krausening-ext", "tmp").getParentFile().getCanonicalPath();
+            LOGGER.warn("No " + Krausening.EXTENSIONS_LOCATION + " set! Default to " + extensionsLocationProperty);
+        }
+	    
+	    File baseLocation = new File(baseLocationProperty);
+	    File extensionLocation = new File(extensionsLocationProperty);	   
+	    
 		List<URL> krauseningPropertyFileURLs = new ArrayList<URL>();
-		List<File> krauseningFolders = Arrays.asList(new File(System.getProperty(Krausening.BASE_LOCATION)), new File(
-				System.getProperty(Krausening.EXTENSIONS_LOCATION)));
+		List<File> krauseningFolders = Arrays.asList(baseLocation, extensionLocation);
 
 		for (String krauseningPropertyFileName : krauseningPropertyFileNames) {
 			for (File krauseningFolder : krauseningFolders) {
