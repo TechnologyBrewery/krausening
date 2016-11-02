@@ -81,7 +81,7 @@ While accessing properties via `java.util.Properties` as `String` values works, 
 # in $KRAUSENING_BASE/example.properties:
 fibonacci=1, 1, 2, 3, 5, 8
 url=https://localhost
-serviceSubPath=https://prodUrl
+serviceSubPath=foo/baz
 
 # in $KRAUSENING_EXTENSIONS/example.properties:
 url=https://prodUrl
