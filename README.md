@@ -21,10 +21,10 @@ Properties properties = krausening.getProperties("example.properties");
 # Krausening in Two Pints (Leveraging Property Extension)#
 Often, some properties need to change as your deployment unit travels between environments.  We want to do this without having to copy and paste all the properties, lowering our maintenance burden to just those properties that have changed.  To accomplish this, build on the prior example by:
 
-1.)  Add a Java System Property called KRAUSENING_EXTENSION pointing to the folder with your extension .properties files
+1.)  Add a Java System Property called KRAUSENING_EXTENSIONS pointing to the folder with your extension .properties files
 ```
 #!bash
-KRAUSENING_EXTENSION=./src/test/resources/prod-env
+KRAUSENING_EXTENSIONS=./src/test/resources/prod-env
 ```
 2.) Create a properties file of the same name as the one in base, only added the properties you want to extend:
 
