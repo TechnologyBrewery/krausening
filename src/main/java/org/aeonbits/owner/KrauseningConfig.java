@@ -9,7 +9,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -51,12 +50,11 @@ public interface KrauseningConfig extends Config {
 					Set<String> duplicatePropertyKeys = new HashSet<String>();
 					Properties mergedProperties = new Properties();
 					for (Properties properties : propertiesList) {
-						for (Entry<Object, Object> propertyKeyAndValue : properties.entrySet()) {
-							Object propertyKey = propertyKeyAndValue.getKey();
+						for (Object propertyKey : properties.keySet()) {
 							if (mergedProperties.containsKey(propertyKey)) {
 								duplicatePropertyKeys.add((String) propertyKey);
 							} else {
-								mergedProperties.put(propertyKey, propertyKeyAndValue.getValue());
+								mergedProperties.put(propertyKey, properties.getProperty((String) propertyKey));
 							}
 						}
 					}
@@ -72,7 +70,7 @@ public interface KrauseningConfig extends Config {
 				Properties mergeProperties(List<Properties> propertiesList) {
 					Properties mergedProperties = new Properties();
 					for (Properties properties : propertiesList) {
-						mergedProperties.putAll(properties);
+					    mergeEncryptableProperties(properties, mergedProperties);
 					}
 					return mergedProperties;
 				}
@@ -82,12 +80,28 @@ public interface KrauseningConfig extends Config {
 				Properties mergeProperties(List<Properties> propertiesList) {
 					Properties mergedProperties = new Properties();
 					for (int reverseIterator = propertiesList.size() - 1; reverseIterator >= 0; reverseIterator--) {
-						mergedProperties.putAll(propertiesList.get(reverseIterator));
+					    mergeEncryptableProperties(propertiesList.get(reverseIterator), mergedProperties);
 					}
 					return mergedProperties;
 				}
 			};
 			abstract Properties mergeProperties(List<Properties> propertiesList);
+			
+            /**
+             * Puts all of the properties from the given merge source into the target, taking into account that
+             * {@link Properties} from the source may be encrypted.
+             * 
+             * @param mergeSource
+             *            properties to merge into the target
+             * @param mergeTarget
+             *            target properties into which the source will be merged.
+             */
+            private static void mergeEncryptableProperties(Properties mergeSource, Properties mergeTarget) {
+                for (Object keyObj : mergeSource.keySet()) {
+                    String key = (String) keyObj;
+                    mergeTarget.put(key, mergeSource.getProperty(key));
+                }
+            }
 		}
 	}
 }

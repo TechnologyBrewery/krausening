@@ -1,6 +1,7 @@
 package org.aeonbits.owner;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
+import static org.aeonbits.owner.util.Reflection.isClassAvailable;
 
 import java.util.Map;
 import java.util.Properties;
@@ -11,6 +12,8 @@ import java.util.concurrent.ScheduledExecutorService;
  * {@link KrauseningAwarePropertiesManager} for property mapper proxy generation.
  */
 class KrauseningFactory extends DefaultFactory {
+
+    private static final boolean isJMXAvailable = isClassAvailable("javax.management.DynamicMBean");
 
 	private final ScheduledExecutorService scheduler;
 
@@ -25,9 +28,14 @@ class KrauseningFactory extends DefaultFactory {
 		VariablesExpander expander = new VariablesExpander(getProperties());
 		PropertiesManager manager = new KrauseningAwarePropertiesManager(clazz, new Properties(), scheduler, expander,
 				loadersManager, imports);
-		PropertiesInvocationHandler handler = new PropertiesInvocationHandler(manager);
+		Object jmxSupport = getJMXSupport(clazz, manager);
+		PropertiesInvocationHandler handler = new PropertiesInvocationHandler(manager, jmxSupport);
 		T proxy = (T) newProxyInstance(clazz.getClassLoader(), interfaces, handler);
 		handler.setProxy(proxy);
 		return proxy;
 	}
+	
+    private Object getJMXSupport(Class<?> clazz, PropertiesManager manager) {
+        return isJMXAvailable ? new JMXSupport(clazz, manager) : null;
+    }
 }

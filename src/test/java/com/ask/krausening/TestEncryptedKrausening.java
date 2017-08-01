@@ -5,23 +5,22 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Properties;
 
+import org.aeonbits.owner.KrauseningConfig;
+import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
+import org.aeonbits.owner.KrauseningConfigFactory;
 import org.bitbucket.krausening.Krausening;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestEncryptedKrausening extends TestKrausening {
 	
 	protected static final String ENCRYPTED_PROPERTIES = "encrypted.properties";
 	protected static final String PASSWORD_KEY = "password";
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Added in a master password to the basic Krausening setup to regression test existing scenarios
-	 * as well as to enable encrypted property settings.
-	 */
-	protected Krausening getKrausening(String baseLocation,	String extensionLocation) {
-		System.setProperty(Krausening.KRAUSENING_PASSWORD, "myMasterPassword");
-		return super.getKrausening(baseLocation, extensionLocation);
+	protected static final String DECRYPTED_PASSWORD_VALUE = "someStrongPassword";
+	
+	@Before
+	public void initKrauseningEncryptionKey() {
+	    System.setProperty(Krausening.KRAUSENING_PASSWORD, "myMasterPassword");
 	}
 	
 	@Test
@@ -30,8 +29,19 @@ public class TestEncryptedKrausening extends TestKrausening {
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(ENCRYPTED_PROPERTIES);
 		assertNotNull(properties);
-		assertEquals(properties.getProperty(PASSWORD_KEY), "someStrongPassword");
-
+		assertEquals(DECRYPTED_PASSWORD_VALUE, properties.getProperty(PASSWORD_KEY));
 	}
 
+	@Test
+	public void testDecryptValueThroughOwnerInterface() {
+	    EncryptedPropertyFileConfig config = KrauseningConfigFactory.create(EncryptedPropertyFileConfig.class);
+	    assertEquals(DECRYPTED_PASSWORD_VALUE, config.getPassword());
+	}
+	
+    @KrauseningSources(ENCRYPTED_PROPERTIES)
+    protected interface EncryptedPropertyFileConfig extends KrauseningConfig {
+
+        @Key(PASSWORD_KEY)
+        String getPassword();
+    }
 }
