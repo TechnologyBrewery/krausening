@@ -2,8 +2,7 @@ package org.aeonbits.owner;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +58,7 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 		if (krauseningHotReload != null) {
 			try {
 				this.krauseningHotReloadLogic = new HotReloadLogic(krauseningHotReload,
-						getKrauseningPropertyFileURLs(this.krauseningPropertyFileNames), this);
+						getKrauseningPropertyFileURIs(this.krauseningPropertyFileNames), this);
 			} catch (IOException exception) {
 				throw new RuntimeException("Could not configure hot reload support for Krausening files", exception);
 			}
@@ -118,14 +117,14 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 	}
 
 	/**
-	 * Returns a list of URLs that map to the actual physical property files managed by {@link Krausening}.
+	 * Returns a list of URIs that map to the actual physical property files managed by {@link Krausening}.
 	 * 
 	 * @param krauseningPropertyFileNames
 	 *            file names of the properties that are managed by {@link Krausening}.
-	 * @return {@link List} of {@link URL}s that map to the physical property files managed by {@link Krausening}.
+	 * @return {@link List} of {@link URI}s that map to the physical property files managed by {@link Krausening}.
 	 * @throws IOException
 	 */
-	private List<URL> getKrauseningPropertyFileURLs(List<String> krauseningPropertyFileNames)
+	private List<URI> getKrauseningPropertyFileURIs(List<String> krauseningPropertyFileNames)
 			throws IOException {
 	    String baseLocationProperty = System.getProperty(Krausening.BASE_LOCATION);
 	    String extensionsLocationProperty = System.getProperty(Krausening.EXTENSIONS_LOCATION);
@@ -143,17 +142,17 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 	    File baseLocation = new File(baseLocationProperty);
 	    File extensionLocation = new File(extensionsLocationProperty);	   
 	    
-		List<URL> krauseningPropertyFileURLs = new ArrayList<URL>();
+		List<URI> krauseningPropertyFileURIs = new ArrayList<URI>();
 		List<File> krauseningFolders = Arrays.asList(baseLocation, extensionLocation);
 
 		for (String krauseningPropertyFileName : krauseningPropertyFileNames) {
 			for (File krauseningFolder : krauseningFolders) {
 				File krauseningPropertyFileObj = new File(krauseningFolder, krauseningPropertyFileName);
 				if (krauseningPropertyFileObj.exists()) {
-					krauseningPropertyFileURLs.add(krauseningPropertyFileObj.toURI().toURL());
+					krauseningPropertyFileURIs.add(krauseningPropertyFileObj.toURI());
 				}
 			}
 		}
-		return krauseningPropertyFileURLs;
+		return krauseningPropertyFileURIs;
 	}
 }
