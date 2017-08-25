@@ -137,6 +137,26 @@ Want Krausening in your project? The following Maven dependency will add it to y
 </dependency>
 ```
 
+## Releasing to Maven Central Repository
+
+Krausening uses both the `maven-release-plugin` and the `nexus-staging-maven-plugin` to facilitate the release and deployment of new Krausening builds. In order to perform a release, you must:
+1.) Obtain a [JIRA](https://issues.sonatype.org/secure/Dashboard.jspa) account with Sonatype OSSRH and access to the `org.bitbucket.askllc` project group
+2.) Ensure that your Sonatype OSSRH JIRA account credentials are specified in your `settings.xml`:
+```
+#!xml
+<settings>
+  <servers>
+    <server>
+      <id>ossrh</id>
+      <username>your-jira-id</username>
+      <password>your-jira-pwd</password>
+    </server>
+  </servers>
+</settings>
+```
+3.) Install `gpg` and distribute your key pair - see [here](http://central.sonatype.org/pages/working-with-pgp-signatures.html).  OS X users may need to execute `export GPG_TTY=\`tty\`;` 
+4.) Execute `mvn release:clean release:prepare`, answer the prompts for the versions and tags, and perform `mvn release:perform`
+
 ## Licensing
 Krausening is available under the [MIT License](http://opensource.org/licenses/mit-license.php).
 
