@@ -108,8 +108,17 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
 			IOUtils.closeQuietly(updatedConfigPropertiesFileWriter);
 		}
 
-		Thread.sleep(3000);
-		assertEquals(updatedPiValue, hotReloadablePropertiesConfig.getPi(), 0);
+        long maxWaitTime = 10000L;
+        long interval = 1000L;
+        long elapsedWaitTime = 0L;
+        while (elapsedWaitTime <= maxWaitTime) {
+            Thread.sleep(interval);
+            elapsedWaitTime += interval;
+            if (updatedPiValue == hotReloadablePropertiesConfig.getPi()) {
+                break;
+            }
+        }
+        assertEquals(updatedPiValue, hotReloadablePropertiesConfig.getPi(), 0);
 	}
 
 	@KrauseningSources(EXAMPLE_PROPERTIES_FILE_NAME)
