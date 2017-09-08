@@ -133,7 +133,7 @@ Want Krausening in your project? The following Maven dependency will add it to y
 <dependency>
     <groupId>org.bitbucket.askllc.krausening</groupId>
     <artifactId>krausening</artifactId>
-    <version>3</version>
+    <version>5</version>
 </dependency>
 ```
 
