@@ -25,21 +25,21 @@
 		<developer>
 			<name>Ryan Ashcraft</name>
 			<email>dryanashcraft@gmail.com</email>
-			<organization>ASK LLC</organization>
-			<organizationUrl>https://bitbucket.org/askllc/</organizationUrl>
+			<organization>Counterpointe Solutions, Inc.</organization>
+			<organizationUrl>https://bitbucket.org/cpointe/</organizationUrl>
 		</developer>
 		<developer>
 			<name>Eric Konieczny</name>
 			<email>ekoniec1@gmail.com</email>
-			<organization>ASK LLC</organization>
-			<organizationUrl>https://bitbucket.org/askllc/</organizationUrl>
+			<organization>Counterpointe Solutions, Inc.</organization>
+			<organizationUrl>https://bitbucket.org/cpointe/</organizationUrl>
 		</developer>
 	</developers>
 
 	<scm>
-		<connection>scm:git:ssh://git@bitbucket.org/askllc/krausening.git</connection>
-		<developerConnection>scm:git:ssh://git@bitbucket.org/askllc/krausening.git</developerConnection>
-		<url>https://bitbucket.org/askllc/krausening.git</url>
+		<connection>scm:git:ssh://git@bitbucket.org/cpointe/krausening.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.org/cpointe/krausening.git</developerConnection>
+		<url>https://bitbucket.org/cpointe/krausening.git</url>
 		<tag>HEAD</tag>
 	</scm>
 
