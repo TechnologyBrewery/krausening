@@ -82,9 +82,18 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 	 */
 	@Override
 	Properties doLoad() {
-		List<Properties> propertiesToMerge = new ArrayList<Properties>(this.krauseningPropertyFileNames.size());
+		List<Properties> propertiesToMerge = new ArrayList<>(this.krauseningPropertyFileNames.size());
+		Krausening krausening = Krausening.getInstance();
 		for (String krauseningPropertyFileName : this.krauseningPropertyFileNames) {
-			propertiesToMerge.add(Krausening.getInstance().getProperties(krauseningPropertyFileName));
+		    Properties properties = krausening.getProperties(krauseningPropertyFileName);
+		    
+		    if (properties == null) {
+		        properties = new Properties();
+		        LOGGER.warn("No properties file was found for {}", krauseningPropertyFileName);
+		    }
+		    
+			propertiesToMerge.add(properties);
+			
 		}
 		if (this.ownerPropertySourcesSpecified) {
 			propertiesToMerge.add(super.doLoad());
@@ -142,7 +151,7 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 	    File baseLocation = new File(baseLocationProperty);
 	    File extensionLocation = new File(extensionsLocationProperty);	   
 	    
-		List<URI> krauseningPropertyFileURIs = new ArrayList<URI>();
+		List<URI> krauseningPropertyFileURIs = new ArrayList<>();
 		List<File> krauseningFolders = Arrays.asList(baseLocation, extensionLocation);
 
 		for (String krauseningPropertyFileName : krauseningPropertyFileNames) {

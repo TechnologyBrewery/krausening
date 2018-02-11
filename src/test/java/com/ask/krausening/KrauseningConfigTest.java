@@ -120,6 +120,14 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         }
         assertEquals(updatedPiValue, hotReloadablePropertiesConfig.getPi(), 0);
 	}
+	
+    @Test
+    public void testUnderlyingPropertiesFileDoesNotExist() throws Exception {
+        DoesNotExistPropertiesConfig doesNotExistConfig = KrauseningConfigFactory
+                .create(DoesNotExistPropertiesConfig.class);
+        assertNotNull(doesNotExistConfig);
+        assertEquals("Should have defaulted to the Owner default value!", Double.valueOf(3.14), Double.valueOf(doesNotExistConfig.getPi()));
+    }
 
 	@KrauseningSources(EXAMPLE_PROPERTIES_FILE_NAME)
 	protected interface SinglePropertyFileConfig extends KrauseningConfig {
@@ -175,4 +183,11 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
 		@Key(PI_PROPERTY_KEY)
 		double getPi();
 	}
+	
+    @KrauseningSources("does-not-exist.properties")
+    protected interface DoesNotExistPropertiesConfig extends KrauseningConfig {
+        @Key(PI_PROPERTY_KEY)
+        @DefaultValue("3.14")
+        double getPi();
+    }	
 }
