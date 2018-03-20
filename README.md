@@ -107,7 +107,7 @@ public interface ExampleConfig extends KrauseningConfig {
   double getPi();
 
   @Key("not-defined-in-prop-file")
-  @Default("1234")
+  @DefaultValue("1234")
   int getInt();
 }
 ```
