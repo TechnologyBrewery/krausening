@@ -45,7 +45,7 @@ public class ExtendedKrauseningSources implements KrauseningSources {
      * @param targetConfigClass config class to change
      * @param propertiesFileName new properties file name
      */
-    public static void alterPropertyAnnonationName(Class<? extends KrauseningConfig> targetConfigClass,
+    public static void alterPropertyAnnotationName(Class<? extends KrauseningConfig> targetConfigClass,
             String propertiesFileName) {
         try {
             ExtendedKrauseningSources updatedSources = new ExtendedKrauseningSources(propertiesFileName);

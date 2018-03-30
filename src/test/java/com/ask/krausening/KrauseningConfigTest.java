@@ -79,7 +79,7 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
 
     @Test
     public void testRenamingProperties() throws Exception {
-        ExtendedKrauseningSources.alterPropertyAnnonationName(SinglePropertyFileConfig.class,
+        ExtendedKrauseningSources.alterPropertyAnnotationName(SinglePropertyFileConfig.class,
                 "a-example.properties");
         SinglePropertyFileConfig singlePropertyFileConfig = KrauseningConfigFactory
                 .create(SinglePropertyFileConfig.class);
