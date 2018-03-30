@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import org.aeonbits.owner.Config.HotReload;
 import org.aeonbits.owner.Config.HotReloadType;
 import org.aeonbits.owner.Config.Sources;
-import org.aeonbits.owner.ExtendedKrauseningSources;
 import org.aeonbits.owner.KrauseningConfig;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.aeonbits.owner.KrauseningConfigFactory;
@@ -79,10 +78,8 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
 
     @Test
     public void testRenamingProperties() throws Exception {
-        ExtendedKrauseningSources.alterPropertyAnnotationName(SinglePropertyFileConfig.class,
-                "a-example.properties");
         SinglePropertyFileConfig singlePropertyFileConfig = KrauseningConfigFactory
-                .create(SinglePropertyFileConfig.class);
+                .create(SinglePropertyFileConfig.class,  "a-example.properties");
         assertNotNull(singlePropertyFileConfig);
         assertEquals(A_FOO_PROPERY_VALUE, singlePropertyFileConfig.getFoo());
     }

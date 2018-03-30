@@ -40,28 +40,4 @@ public class ExtendedKrauseningSources implements KrauseningSources {
         return this.value;
     }
 
-    /**
-     * Overrides the {@link KrauseningSources} properties file name for the {@link KrauseningConfig} class in question.
-     * @param targetConfigClass config class to change
-     * @param propertiesFileName new properties file name
-     */
-    public static void alterPropertyAnnotationName(Class<? extends KrauseningConfig> targetConfigClass,
-            String propertiesFileName) {
-        try {
-            ExtendedKrauseningSources updatedSources = new ExtendedKrauseningSources(propertiesFileName);
-
-            Method method = Class.class.getDeclaredMethod("annotationData", null);
-            method.setAccessible(true);
-            Object annotationData = method.invoke(targetConfigClass);
-            Field annotations = annotationData.getClass().getDeclaredField("annotations");
-            annotations.setAccessible(true);
-            Map<Class<? extends Annotation>, Annotation> map = (Map<Class<? extends Annotation>, Annotation>) annotations
-                    .get(annotationData);
-            map.put(KrauseningSources.class, updatedSources);
-        } catch (Exception e) {
-            throw new KrauseningException(
-                    "Could not update " + targetConfigClass.getSimpleName() + " @KrauseningSources property!", e);
-        }
-    }
-
 }
