@@ -63,11 +63,12 @@ public final class KrauseningConfigFactory {
      * 
      * @param clazz
      *            the interface extending from {@link KrauseningConfig} that you want to instantiate.
+     * @param newPropertiesFile
+     *              the new properties file name to use for the class
      * @param imports
      *            additional variables to be used to resolve the properties.
      * @param <T>
      *            type of the interface.
-     * @param 
      * @return an object implementing the given interface, which maps methods to property values.
      */
     public static <T extends KrauseningConfig> T create(Class<? extends T> clazz, String newPropertiesFile, Map<?, ?>... imports) {
