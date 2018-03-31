@@ -9,11 +9,11 @@
 		</layout>
 	</appender>
 	
-	<category name="com.ask">
+	<category name="org.bitbucket">
 		<priority value="DEBUG" />
 	</category>
-
-	<category name="org.apache.solr">
+	
+	<category name="org.aeonbits">
 		<priority value="DEBUG" />
 	</category>
 

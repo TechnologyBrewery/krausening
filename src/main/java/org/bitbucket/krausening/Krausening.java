@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
@@ -86,7 +85,7 @@ public final class Krausening {
 		long start = System.currentTimeMillis();
 		LOGGER.debug("Loading Krausening properties...");
 		
-		managedProperties = new ConcurrentHashMap<String, Properties>();
+		managedProperties = new ConcurrentHashMap<>();
 		
 		boolean hasLocations = setLocations();
 		
@@ -115,17 +114,17 @@ public final class Krausening {
 		}
 		
 		long stop = System.currentTimeMillis();
-		LOGGER.debug("Loaded Krausening properties in " + (stop - start) + "ms");
+		LOGGER.debug("Loaded Krausening properties in {}ms", (stop - start));
 		
 	}
 	
 	protected void setEncryptionFoundation() {
 		String masterPassword = System.getProperty(KRAUSENING_PASSWORD);
 		if (StringUtils.isBlank(masterPassword)) {
-			LOGGER.warn("No " + KRAUSENING_PASSWORD + " set, Krausening will not support encrypted property values!");
+			LOGGER.warn("No {} set, Krausening will not support encrypted property values!", KRAUSENING_PASSWORD);
 			
 		} else {
-			LOGGER.warn(KRAUSENING_PASSWORD + " configured, Krausening will support encrypted property values.");
+			LOGGER.info("{} configured, Krausening will support encrypted property values.", KRAUSENING_PASSWORD);
 			hasMasterPassword = true;
 		}
 	}
@@ -136,7 +135,7 @@ public final class Krausening {
 	 * @param location The location type (i.e., base or extension)
 	 */
 	protected void logFileDoesNotExist(File file, String location) {
-		LOGGER.error(location + " refers to a location that does not exist: " + file.getAbsolutePath());
+		LOGGER.warn("{} refers to a location that does not exist: {}", location, file.getAbsolutePath());
 		
 	}
 	
@@ -148,20 +147,20 @@ public final class Krausening {
 		
 		baseLocation = System.getProperty(BASE_LOCATION);
 		if (StringUtils.isBlank(baseLocation)) {
-			LOGGER.error("Without a " + BASE_LOCATION + " set, Krausening cannot load any properties!");
+			LOGGER.warn("Without a {} set, Krausening cannot load any properties!", BASE_LOCATION);
 			
 		} else {
-			LOGGER.error("Krausening base location: " + baseLocation);
+			LOGGER.info("Krausening base location: {}", baseLocation);
 			hasLocations = true;
 			
 		}
 		
 		extensionsLocation = System.getProperty(EXTENSIONS_LOCATION);
 		if (StringUtils.isBlank(extensionsLocation)) {
-			LOGGER.warn("No " + EXTENSIONS_LOCATION + " set...");
+			LOGGER.warn("No {} set...", EXTENSIONS_LOCATION);
 			
 		} else {
-			LOGGER.error("Krausening extensions location: " + extensionsLocation);
+			LOGGER.info("Krausening extensions location: {}", extensionsLocation);
 			
 		}
 		
@@ -177,26 +176,21 @@ public final class Krausening {
 		File[] files = location.listFiles((FilenameFilter)new SuffixFileFilter(".properties"));
 		
 		if ((files == null) || (files.length == 0)) {
-			LOGGER.warn("No files were found within: " + location.getAbsolutePath());
+			LOGGER.warn("No files were found within: {}", location.getAbsolutePath());
 			
 		} else {
-			String fileName = null;
-			Reader fileReader = null;
+			String fileName = null;			
 			Properties fileProperties = null;
 			for (File file : files) {
-				try {
-					fileName = file.getName();
-					fileProperties = (managedProperties.containsKey(fileName)) 
-							? managedProperties.get(fileName) : createEmptyProperties();
-					fileReader = new FileReader(file);
+				fileName = file.getName();
+				fileProperties = (managedProperties.containsKey(fileName)) 
+						? managedProperties.get(fileName) : createEmptyProperties();
+				try (Reader fileReader = new FileReader(file)) {
 					fileProperties.load(fileReader);
 					managedProperties.put(fileName, fileProperties);
 					
 				} catch (IOException e) {
 					LOGGER.error("Could not read the file: " + file.getAbsolutePath(), e);
-					
-				} finally {
-					IOUtils.closeQuietly(fileReader);
 					
 				}				
 			}			
