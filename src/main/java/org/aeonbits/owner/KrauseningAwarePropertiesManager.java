@@ -15,6 +15,7 @@ import org.aeonbits.owner.KrauseningConfig.KrauseningMergePolicy.KrauseningMerge
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.apache.commons.lang3.StringUtils;
 import org.bitbucket.krausening.Krausening;
+import org.bitbucket.krausening.KrauseningException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +61,7 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 				this.krauseningHotReloadLogic = new HotReloadLogic(krauseningHotReload,
 						getKrauseningPropertyFileURIs(this.krauseningPropertyFileNames), this);
 			} catch (IOException exception) {
-				throw new RuntimeException("Could not configure hot reload support for Krausening files", exception);
+				throw new KrauseningException("Could not configure hot reload support for Krausening files", exception);
 			}
 
 			if (this.krauseningHotReloadLogic.isAsync())
@@ -138,14 +139,16 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 	    String baseLocationProperty = System.getProperty(Krausening.BASE_LOCATION);
 	    String extensionsLocationProperty = System.getProperty(Krausening.EXTENSIONS_LOCATION);
 	    
-	    if (StringUtils.isBlank(baseLocationProperty)) {
-	        baseLocationProperty = File.createTempFile("krausening-base", "tmp").getParentFile().getCanonicalPath();
-	        LOGGER.warn("No " + Krausening.BASE_LOCATION + " set! Default to " + baseLocationProperty);
+	    final String TMP = "tmp";
+	    final String DEFAULT_LOCATION_MESSAGE = "No {} set! Default to {}";        
+        if (StringUtils.isBlank(baseLocationProperty)) {
+	        baseLocationProperty = File.createTempFile("krausening-base", TMP).getParentFile().getCanonicalPath();
+	        LOGGER.warn(DEFAULT_LOCATION_MESSAGE, Krausening.BASE_LOCATION, baseLocationProperty);
 	    }
 	    
 	    if (StringUtils.isBlank(extensionsLocationProperty)) {
-	        extensionsLocationProperty = File.createTempFile("krausening-ext", "tmp").getParentFile().getCanonicalPath();
-            LOGGER.warn("No " + Krausening.EXTENSIONS_LOCATION + " set! Default to " + extensionsLocationProperty);
+	        extensionsLocationProperty = File.createTempFile("krausening-ext", TMP).getParentFile().getCanonicalPath();
+            LOGGER.warn(DEFAULT_LOCATION_MESSAGE, Krausening.EXTENSIONS_LOCATION, extensionsLocationProperty);
         }
 	    
 	    File baseLocation = new File(baseLocationProperty);

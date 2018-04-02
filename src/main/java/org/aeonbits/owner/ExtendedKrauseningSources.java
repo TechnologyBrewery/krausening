@@ -1,12 +1,8 @@
 package org.aeonbits.owner;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
-import org.bitbucket.krausening.KrauseningException;
 
 /**
  * Provides a consistent mechanism to extend a KrauseningSources annotated config class by 
