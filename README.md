@@ -121,8 +121,16 @@ assertEquals(new URL("https://prodUrl/foo/baz/endpoint"), config.getFullUrl());
 assertEquals(3.1415d, config.getPi());
 assertEquals(1234, config.getInt());
 ```
-
-3.) Check out `KrauseningConfigTest` in `src/test/java` and/or the Owner documentation for additional information on how to best utilize the Krausening-Owner integration.
+3.) Optionally, get a list of all the properties in the newly created interface by calling the configuration fill() method:
+```
+#!java
+ExampleConfig config = KrauseningConfigFactory.create(ExampleConfig.class);
+Properties properties = new Properties();
+config.fill(properties);
+assertTrue(properties.keySet().contains("pi"));
+assertEquals("3.1415",properties.getProperty("pi"));
+```
+4.) Check out `KrauseningConfigTest` in `src/test/java` and/or the Owner documentation for additional information on how to best utilize the Krausening-Owner integration.
 # Last Call
 
 You're now 4 pints in and ready for how ever many more property files you need without having to worry about stumbling through deployment!

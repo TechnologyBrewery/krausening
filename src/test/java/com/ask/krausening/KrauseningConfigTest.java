@@ -2,6 +2,7 @@ package com.ask.krausening;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -25,12 +26,15 @@ import org.junit.Test;
 public class KrauseningConfigTest extends AbstractKrauseningTest {
 
     protected static final String NON_EXISTENT_PROPERTY_DEFAULT_VALUE = "12345";
+    protected static final String NON_EXISTENT_PROPERTY_DEFAULT_KEY = "not.defined.property.key";
     protected static final String CONFIG_PROPERTIES_FILE_NAME = "config.properties";
     protected static final String PI_PROPERTY_KEY = "pi";
+
     protected static final double PI_PROPERTY_VALUE = 3.14159;
     protected static final String BASE_PROPERTIES_LOCATION_IN_OUTPUT_DIR = "./target/test-classes/base";
     protected static final String EXTENSIONS_PROPERTIES_LOCATION_IN_OUTPUT_DIR = "./target/test-classes/extensions";
-    protected static final String A_FOO_PROPERY_VALUE = "blah";
+    protected static final String A_FOO_PROPERTY_VALUE = "blah";
+    protected static final String A_FOO_PROPERTY_KEY = "foo";
 
     @Before
     public void reloadKrausening() throws Exception {
@@ -79,9 +83,28 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
     @Test
     public void testRenamingProperties() throws Exception {
         SinglePropertyFileConfig singlePropertyFileConfig = KrauseningConfigFactory
-                .create(SinglePropertyFileConfig.class,  "a-example.properties");
+                .create(SinglePropertyFileConfig.class, "a-example.properties");
         assertNotNull(singlePropertyFileConfig);
-        assertEquals(A_FOO_PROPERY_VALUE, singlePropertyFileConfig.getFoo());
+        assertEquals(A_FOO_PROPERTY_VALUE, singlePropertyFileConfig.getFoo());
+    }
+
+    @Test
+    public void testGettingProperties() throws Exception {
+        SinglePropertyFileConfig singlePropertyFileConfig = KrauseningConfigFactory
+                .create(SinglePropertyFileConfig.class, "a-example.properties");
+        assertNotNull(singlePropertyFileConfig);
+        Properties properties = new Properties();
+        singlePropertyFileConfig.fill(properties);
+        assertNotNull(properties);
+        testPropertyKeyValue(properties, A_FOO_PROPERTY_KEY, A_FOO_PROPERTY_VALUE);
+        testPropertyKeyValue(properties, NON_EXISTENT_PROPERTY_DEFAULT_KEY, NON_EXISTENT_PROPERTY_DEFAULT_VALUE);
+    }
+
+    private void testPropertyKeyValue(Properties properties, String expectedKey, Object expectedValue) {
+        assertTrue("Dynamic property set unexpectedly did not contain property " + expectedKey,
+                properties.keySet().contains(expectedKey));
+        assertEquals("Dynamic property set unexpectedly did not match value for " + expectedKey, expectedValue,
+                properties.getProperty(expectedKey));
     }
 
     @Test
@@ -148,7 +171,7 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         @Key(OVERRIDDEN_PROPERTY_KEY)
         String getOverriddenProperty();
 
-        @Key("not.defined.property.key")
+        @Key(NON_EXISTENT_PROPERTY_DEFAULT_KEY)
         @DefaultValue(NON_EXISTENT_PROPERTY_DEFAULT_VALUE)
         int getIntegerProperty();
     }
