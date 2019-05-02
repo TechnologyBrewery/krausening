@@ -1,13 +1,13 @@
 package com.ask.krausening;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Properties;
 
 import org.bitbucket.krausening.Krausening;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestKrausening extends AbstractKrauseningTest {
 

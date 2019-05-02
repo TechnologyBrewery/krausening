@@ -1,8 +1,17 @@
 package com.ask.krausening;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.aeonbits.owner.Config.HotReload;
+import org.aeonbits.owner.Config.HotReloadType;
+import org.aeonbits.owner.Config.Sources;
+import org.aeonbits.owner.KrauseningConfig;
+import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
+import org.aeonbits.owner.KrauseningConfigFactory;
+import org.apache.commons.io.IOUtils;
+import org.bitbucket.krausening.Krausening;
+import org.bitbucket.krausening.KrauseningException;
+import org.bitbucket.krausening.RequiredOverride;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -12,16 +21,11 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import org.aeonbits.owner.Config.HotReload;
-import org.aeonbits.owner.Config.HotReloadType;
-import org.aeonbits.owner.Config.Sources;
-import org.aeonbits.owner.KrauseningConfig;
-import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
-import org.aeonbits.owner.KrauseningConfigFactory;
-import org.apache.commons.io.IOUtils;
-import org.bitbucket.krausening.Krausening;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KrauseningConfigTest extends AbstractKrauseningTest {
 
@@ -35,9 +39,10 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
     protected static final String EXTENSIONS_PROPERTIES_LOCATION_IN_OUTPUT_DIR = "./target/test-classes/extensions";
     protected static final String A_FOO_PROPERTY_VALUE = "blah";
     protected static final String A_FOO_PROPERTY_KEY = "foo";
+    protected static final String BASE_OVERRIDE_LOCATION = "./src/test/resources/base-override";
 
-    @Before
-    public void reloadKrausening() throws Exception {
+    @BeforeEach
+    public void beforeTestExecution() throws Exception {
         System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
         System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
         Krausening krausening = Krausening.getInstance();
@@ -60,15 +65,17 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         MultiplePropertyFileConfig multiplePropertyFileConfig = KrauseningConfigFactory
                 .create(MultiplePropertyFileConfig.class);
         assertNotNull(multiplePropertyFileConfig);
-        assertEquals(PI_PROPERTY_VALUE, multiplePropertyFileConfig.getPi(), 0);
+        assertEquals(PI_PROPERTY_VALUE, multiplePropertyFileConfig.getPi());
         assertEquals(FOO_PROPERTY_VALUE, multiplePropertyFileConfig.getFoo());
         assertEquals(OVERRIDDEN_PROPERTY_VALUE, multiplePropertyFileConfig.getOverriddenProperty());
         assertEquals("The value of PI is 3.14159", multiplePropertyFileConfig.getPropertyWithVariableExpansion());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testLoadPropertyFilesWithDuplicatePropertyKeys() throws Exception {
-        KrauseningConfigFactory.create(DuplicatePropertyKeysConfig.class);
+        assertThrows(RuntimeException.class, () -> {
+            KrauseningConfigFactory.create(DuplicatePropertyKeysConfig.class);
+        });
     }
 
     @Test
@@ -76,7 +83,7 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         KrauseningAndOwnerLoadedPropertiesConfig ownerAndKrauseningLoadedConfig = KrauseningConfigFactory
                 .create(KrauseningAndOwnerLoadedPropertiesConfig.class);
         assertNotNull(ownerAndKrauseningLoadedConfig);
-        assertEquals(PI_PROPERTY_VALUE, ownerAndKrauseningLoadedConfig.getPi(), 0);
+        assertEquals(PI_PROPERTY_VALUE, ownerAndKrauseningLoadedConfig.getPi());
         assertEquals("consoleAppender", ownerAndKrauseningLoadedConfig.getLog4JAppenderName());
     }
 
@@ -101,10 +108,10 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
     }
 
     private void testPropertyKeyValue(Properties properties, String expectedKey, Object expectedValue) {
-        assertTrue("Dynamic property set unexpectedly did not contain property " + expectedKey,
-                properties.keySet().contains(expectedKey));
-        assertEquals("Dynamic property set unexpectedly did not match value for " + expectedKey, expectedValue,
-                properties.getProperty(expectedKey));
+        assertTrue(properties.keySet().contains(expectedKey),
+                "Dynamic property set unexpectedly did not contain property " + expectedKey);
+        assertEquals(expectedValue, properties.getProperty(expectedKey),
+                "Dynamic property set unexpectedly did not match value for " + expectedKey);
     }
 
     @Test
@@ -117,7 +124,7 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         HotReloadablePropertiesConfig hotReloadablePropertiesConfig = KrauseningConfigFactory
                 .create(HotReloadablePropertiesConfig.class);
         assertNotNull(hotReloadablePropertiesConfig);
-        assertEquals(PI_PROPERTY_VALUE, hotReloadablePropertiesConfig.getPi(), 0);
+        assertEquals(PI_PROPERTY_VALUE, hotReloadablePropertiesConfig.getPi());
 
         String configPropertiesFilePath = EXTENSIONS_PROPERTIES_LOCATION_IN_OUTPUT_DIR + "/"
                 + CONFIG_PROPERTIES_FILE_NAME;
@@ -150,7 +157,7 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
                 break;
             }
         }
-        assertEquals(updatedPiValue, hotReloadablePropertiesConfig.getPi(), 0);
+        assertEquals(updatedPiValue, hotReloadablePropertiesConfig.getPi());
     }
 
     @Test
@@ -158,8 +165,98 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         DoesNotExistPropertiesConfig doesNotExistConfig = KrauseningConfigFactory
                 .create(DoesNotExistPropertiesConfig.class);
         assertNotNull(doesNotExistConfig);
-        assertEquals("Should have defaulted to the Owner default value!", Double.valueOf(3.14),
-                Double.valueOf(doesNotExistConfig.getPi()));
+        assertEquals(Double.valueOf(3.14), Double.valueOf(doesNotExistConfig.getPi()),
+                "Should have defaulted to the Owner default value!");
+    }
+
+    @Test
+    public void testRequiredClassWorking() throws Exception {
+        System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
+        Krausening krausening = Krausening.getInstance();
+        krausening.loadProperties();
+        NeedsOverridePropertiesConfig overriddenConfig = KrauseningConfigFactory
+                .create(NeedsOverridePropertiesConfig.class);
+        assertNotNull(overriddenConfig);
+        assertEquals("overridden",
+                overriddenConfig.getRequiredOverrideField(), "Overridden value is not correct");
+    }
+
+    @Test
+    public void testRequiredClassOverrideMissingLocation() throws Exception {
+        System.setProperty(Krausening.BASE_LOCATION, BASE_OVERRIDE_LOCATION);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, "./not-real");
+        Krausening krausening = Krausening.getInstance();
+
+        assertThrows(KrauseningException.class, krausening::loadProperties);
+
+    }
+
+    @Test
+    public void testRequiredClassOverrideMissingFile() throws Exception {
+        System.setProperty(Krausening.BASE_LOCATION, BASE_OVERRIDE_LOCATION);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, "./src/test/resources/extensions-missing-file");
+        Krausening krausening = Krausening.getInstance();
+        assertThrows(KrauseningException.class, krausening::loadProperties);
+    }
+
+    @Test
+    public void testRequiredClassOverrideMissingProperty() throws Exception {
+        System.setProperty(Krausening.BASE_LOCATION, BASE_OVERRIDE_LOCATION);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, "./src/test/resources/extensions-missing-property");
+        Krausening krausening = Krausening.getInstance();
+        assertThrows(KrauseningException.class, krausening::loadProperties);
+    }
+
+    @Test
+    public void testRequiredClassNotRequiredByEnvironment() throws Exception {
+        System.setProperty(Krausening.BASE_LOCATION, BASE_OVERRIDE_LOCATION);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, "./src/test/resources/extensions-no-required-overrides-by-environment");
+        Krausening krausening = Krausening.getInstance();
+        assertDoesNotThrow(krausening::loadProperties, "Exception thrown when class override is not required.");
+    }
+
+    @Test
+    public void testRequiredMethodRequiredByEnvironment() throws Exception {
+        System.setProperty(Krausening.BASE_LOCATION, BASE_OVERRIDE_LOCATION);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
+        Krausening krausening = Krausening.getInstance();
+        krausening.loadProperties();
+        NeedsOverrideByEnvironmentPropertiesConfig overriddenConfig = KrauseningConfigFactory
+                .create(NeedsOverrideByEnvironmentPropertiesConfig.class);
+        assertNotNull(overriddenConfig);
+        assertEquals("environment-required",
+                overriddenConfig.getRequiredOverrideField(), "Overridden value is not correct per environment");
+    }
+
+    @Test
+    public void testRequiredClassRequiredByEnvironment() throws Exception {
+        System.setProperty(Krausening.BASE_LOCATION, BASE_OVERRIDE_LOCATION);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
+        Krausening krausening = Krausening.getInstance();
+        krausening.loadProperties();
+        NeedsOverrideByEnvironmentForAllPropertiesConfig overriddenConfig = KrauseningConfigFactory
+                .create(NeedsOverrideByEnvironmentForAllPropertiesConfig.class);
+        assertNotNull(overriddenConfig);
+        assertEquals("environment-required",
+                overriddenConfig.getRequiredOverrideField(), "Overridden value is not correct per environment");
+        assertEquals(3.1415926,
+                overriddenConfig.getPi(), "Overridden value is not correct per environment");
+    }
+
+    @Test
+    public void testMultipleErrors() throws Exception {
+        System.setProperty(Krausening.BASE_LOCATION, BASE_OVERRIDE_LOCATION);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, "./not-real");
+        Krausening krausening = Krausening.getInstance();
+        try {
+            krausening.loadProperties();
+        } catch (KrauseningException e) {
+            String errorMsg = e.getMessage();
+            assertTrue(errorMsg.contains("example-override-environment-all.properties"));
+            assertTrue(errorMsg.contains("example-override.properties"));
+        }
+
     }
 
     @KrauseningSources(EXAMPLE_PROPERTIES_FILE_NAME)
@@ -222,5 +319,41 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         @Key(PI_PROPERTY_KEY)
         @DefaultValue("3.14")
         double getPi();
+    }
+
+    @KrauseningSources("example-override.properties")
+    protected interface NeedsOverridePropertiesConfig extends KrauseningConfig {
+        @Key(PI_PROPERTY_KEY)
+        @DefaultValue("3.14")
+        double getPi();
+
+        @Key("required.override")
+        @DefaultValue("default")
+        @RequiredOverride
+        String getRequiredOverrideField();
+    }
+
+    @KrauseningSources("example-override-environment.properties")
+    protected interface NeedsOverrideByEnvironmentPropertiesConfig extends KrauseningConfig {
+        @Key(PI_PROPERTY_KEY)
+        @DefaultValue("3.14")
+        double getPi();
+
+        @Key("required.override.by.environment")
+        @DefaultValue("default")
+        @RequiredOverride(environments = "extensions")
+        String getRequiredOverrideField();
+    }
+
+    @RequiredOverride(environments = {"extensions", "not-real"})
+    @KrauseningSources("example-override-environment-all.properties")
+    protected interface NeedsOverrideByEnvironmentForAllPropertiesConfig extends KrauseningConfig {
+        @Key(PI_PROPERTY_KEY)
+        @DefaultValue("3.14")
+        double getPi();
+
+        @Key("required.override.by.environment")
+        @DefaultValue("default")
+        String getRequiredOverrideField();
     }
 }

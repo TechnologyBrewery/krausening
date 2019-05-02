@@ -1,16 +1,16 @@
 package com.ask.krausening;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Properties;
-
 import org.aeonbits.owner.KrauseningConfig;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.aeonbits.owner.KrauseningConfigFactory;
 import org.bitbucket.krausening.Krausening;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestEncryptedKrausening extends TestKrausening {
 	
@@ -18,8 +18,8 @@ public class TestEncryptedKrausening extends TestKrausening {
 	protected static final String PASSWORD_KEY = "password";
 	protected static final String DECRYPTED_PASSWORD_VALUE = "someStrongPassword";
 	
-	@Before
-	public void initKrauseningEncryptionKey() {
+	@BeforeEach
+	public void beforeTestExecution() {
 	    System.setProperty(Krausening.KRAUSENING_PASSWORD, "myMasterPassword");
 	}
 	
