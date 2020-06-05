@@ -109,10 +109,7 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
 
     @Test
     public void testSynchronousHotReloadOfKrauseningProperties() throws Exception {
-        System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION_IN_OUTPUT_DIR);
-        System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION_IN_OUTPUT_DIR);
-        Krausening krausening = Krausening.getInstance();
-        krausening.loadProperties();
+        loadProperties(BASE_PROPERTIES_LOCATION_IN_OUTPUT_DIR, EXTENSIONS_PROPERTIES_LOCATION_IN_OUTPUT_DIR);
 
         HotReloadablePropertiesConfig hotReloadablePropertiesConfig = KrauseningConfigFactory
                 .create(HotReloadablePropertiesConfig.class);
@@ -160,6 +157,48 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         assertNotNull(doesNotExistConfig);
         assertEquals("Should have defaulted to the Owner default value!", Double.valueOf(3.14),
                 Double.valueOf(doesNotExistConfig.getPi()));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testNoConfigurationFile() throws Exception {
+        loadProperties("./src/test/resources/application-config/invalid-conf-file",
+                "./src/test/resources/application-config/extension");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testMissingBasePropertyFile() throws Exception {
+        loadProperties("./src/test/resources/application-config/base-missing-property-file",
+                "./src/test/resources/application-config/extension");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testMissingExtensionPropertyFile() throws Exception {
+        loadProperties("./src/test/resources/application-config/base",
+                "./src/test/resources/application-config/extension-missing-property-file");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testExtensionFileExistsThatShouldNotExist() throws Exception {
+        loadProperties("./src/test/resources/application-config/base",
+                "./src/test/resources/application-config/extension-file-exists-but-should-not");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testMissingBasePropertyValue() throws Exception {
+        loadProperties("./src/test/resources/application-config/base-missing-property-value",
+                "./src/test/resources/application-config/extension");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testMissingExtensionPropertyValue() throws Exception {
+        loadProperties("./src/test/resources/application-config/base",
+                "./src/test/resources/application-config/extension-missing-property-value");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testExtensionPropertyValueThatShouldNotExist() throws Exception {
+        loadProperties("./src/test/resources/application-config/base",
+                "./src/test/resources/application-config/extension-property-exists-but-should-not");
     }
 
     @KrauseningSources(EXAMPLE_PROPERTIES_FILE_NAME)
@@ -222,5 +261,13 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         @Key(PI_PROPERTY_KEY)
         @DefaultValue("3.14")
         double getPi();
+    }
+
+
+    private void loadProperties(final String basePropertiesLocation, final String extensionsPropertiesLocation) {
+        System.setProperty(Krausening.BASE_LOCATION, basePropertiesLocation);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, extensionsPropertiesLocation);
+        Krausening krausening = Krausening.getInstance();
+        krausening.loadProperties();
     }
 }
