@@ -51,7 +51,71 @@ assertEquals(properties.get("propertyB"), "https://prodUrl/");
 ```
 4.) You're done - try a mystery beer with Krausening's encryption integration to further quench your thirst.
 
-# Krausening in Three Pints (Leveraging Jasypt for Encrypting/Decrypting Properties)#
+# Krausening in Three Pints (Leveraging context specific properties)#
+Sometimes different contexts/applications/classloads/wars want to have their own properties even when deployed in the same environments. 
+For example, foo and bar are deployed together with the same krausening base and extensions set, but _foo wants to have my.property=X and bar wants to have my.property=Y_.
+In this case you can leverage override extensions to apply different properties per context.
+
+1.)  Add a Java System Property called KRAUSENING_OVERRIDE_EXTENSIONS pointing to the folder with your override extension .properties files
+```
+#!bash
+KRAUSENING_OVERRIDE_EXTENSIONS=./src/test/resources/prod-env-overrides
+```
+
+2.) Create subfolders for the different contexts you need to override extensions
+
+```
+#!bash
+# in $KRAUSENING_OVERRIDE_EXTENSIONS/foo/example.properties:
+my.property=X
+
+# in $KRAUSENING_OVERRIDE_EXTENSIONS/bar/example.properties:
+my.property=Y
+```
+
+3.A) Update the web.xml files for each context to point to a different subfolder within the override extensions location
+
+web.xml for foo
+```
+#!xml
+    <listener>
+        <listener-class>org.bitbucket.krausening.KrauseningWarSpecificBootstrapContextListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>override.extensions.subfolder</param-name>
+        <param-value>foo</param-value>
+    </context-param>
+```
+
+web.xml for bar (**NOTE the difference in the subfolder parameter**)
+```
+#!xml
+    <listener>
+        <listener-class>org.bitbucket.krausening.KrauseningWarSpecificBootstrapContextListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>override.extensions.subfolder</param-name>
+        <param-value>bar</param-value>
+    </context-param>
+```
+```
+#!java
+Krausening krausening = Krausening.getInstance("foo");
+Properties properties = krausening.getProperties("example.properties");
+assertEquals(properties.get("my.property"), "X");
+```
+
+
+3.B) Alternatively, you can use an override subfolder when getting the krausening instance.
+
+```
+#!java
+Krausening krausening = Krausening.getInstance("foo");
+Properties properties = krausening.getProperties("example.properties");
+assertEquals(properties.get("my.property"), "X");
+```
+
+# Krausening in Four Pints (Leveraging Jasypt for Encrypting/Decrypting Properties)#
 Frequently, it is useful to store encrypted information within properties files.  Krausening optionally leverages Jasypt to allow stored properties to be encrypted at rest while also decrypting property values as they are read without manual interaction.
 
 1.)  Add a Java System Property called KRAUSENING_PASSWORD pointing to your Jasypt master encryption password.
@@ -77,7 +141,7 @@ assertEquals(properties.get("password"), "someStrongPassword");
 
 4.) You're done - go for the whole sampler with Krausening's Owner integration if you're still thirsty.
 
-# Krausening in Four Pints (Leveraging Owner Integration to Access Properties via Interfaces (and more))#
+# Krausening in Five Pints (Leveraging Owner Integration to Access Properties via Interfaces (and more))#
 While accessing properties via `java.util.Properties` as `String` values works, wouldn't it be great if we could get compile-safe, strongly typed references to our Krausening property values that reflect their actual type? By integrating tightly with [Owner](http://owner.aeonbits.org/), Krausening can offer annotation-based type conversion, variable expansion, hot reloading, XML property file support, and all of the other great features that are built into Owner. Assuming that we have the following properties files created: 
 ```
 #!bash
@@ -133,7 +197,7 @@ assertEquals("3.1415",properties.getProperty("pi"));
 4.) Check out `KrauseningConfigTest` in `src/test/java` and/or the Owner documentation for additional information on how to best utilize the Krausening-Owner integration.
 # Last Call
 
-You're now 4 pints in and ready for how ever many more property files you need without having to worry about stumbling through deployment!
+You're now 5 pints in and ready for how ever many more property files you need without having to worry about stumbling through deployment!
 
 # Distribution Channel
 
