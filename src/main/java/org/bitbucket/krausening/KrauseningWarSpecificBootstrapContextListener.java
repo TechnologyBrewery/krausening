@@ -11,7 +11,7 @@ public class KrauseningWarSpecificBootstrapContextListener implements ServletCon
     @Override
     public void contextInitialized(ServletContextEvent event) {
         ServletContext servletContext = event.getServletContext();
-        String overrideExtensionLocation = servletContext.getInitParameter(Krausening.OVERRIDE_EXTENSIONS_LOCATION);
+        String overrideExtensionLocation = servletContext.getInitParameter(Krausening.OVERRIDE_EXTENSIONS_SUBFOLDER_PARAM);
 
         if (StringUtils.isNotBlank(overrideExtensionLocation)) {
             Krausening krausening = Krausening.getInstance();

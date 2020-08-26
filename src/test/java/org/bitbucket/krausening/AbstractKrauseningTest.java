@@ -14,11 +14,17 @@ public abstract class AbstractKrauseningTest {
 	protected static final String WAR_1_OVERRIDDEN_PROPERTY_VALUE = "test-war-1-specific-value";
 	protected static final String WAR_2_OVERRIDDEN_PROPERTY_VALUE = "test-war-2-specific-value";
 	protected static final String EXAMPLE_PROPERTIES_FILE_NAME = "example.properties";
+	protected static final String NO_LOCATION = "";
 	
 	protected Krausening getKrausening(String baseLocation, String extensionLocation) {
-		System.setProperty(Krausening.BASE_LOCATION, baseLocation);
-		System.setProperty(Krausening.EXTENSIONS_LOCATION, extensionLocation);
-		Krausening krausening = Krausening.getInstance();
-		return krausening;
+		return getKrausening(baseLocation, extensionLocation, NO_LOCATION);
 	}
+	
+	protected Krausening getKrausening(String baseLocation, String extensionLocation, String overrideLocation) {
+        System.setProperty(Krausening.BASE_LOCATION, baseLocation);
+        System.setProperty(Krausening.EXTENSIONS_LOCATION, extensionLocation);
+        System.setProperty(Krausening.OVERRIDE_EXTENSIONS_LOCATION, overrideLocation);
+        Krausening krausening = Krausening.getInstance();
+        return krausening;
+    }
 }

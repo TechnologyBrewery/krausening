@@ -47,7 +47,7 @@ public final class Krausening {
     public static final String OVERRIDE_EXTENSIONS_LOCATION = "KRAUSENING_OVERRIDE_EXTENSIONS";
 
     /** Param for reading in the path for the classloader/war-specific extensions. */
-    public static final String OVERRIDE_EXTENSIONS_LOCATION_PARAM = "override.extensions.location";
+    public static final String OVERRIDE_EXTENSIONS_SUBFOLDER_PARAM = "override.extensions.subfolder";
 
     /** Value of a set a master encryption password. */
     public static final String KRAUSENING_PASSWORD = "KRAUSENING_PASSWORD";
@@ -134,11 +134,13 @@ public final class Krausening {
                 // Get the path relative to the override extensions location
                 String overrideExtensionLocationPath = FilenameUtils.concat(baseOverrideLocation, overrideExtensionLocation);
                 
-                File overrideExtensionsLocationAsFile = new File(overrideExtensionLocationPath);
-                if (overrideExtensionsLocationAsFile.exists()) {
-                    loadPropertiesFromLocation(overrideExtensionsLocationAsFile);
-                } else {
-                    logFileDoesNotExist(overrideExtensionsLocationAsFile, OVERRIDE_EXTENSIONS_LOCATION);
+                if(overrideExtensionLocationPath != null) {
+                    File overrideExtensionsLocationAsFile = new File(overrideExtensionLocationPath);
+                    if (overrideExtensionsLocationAsFile.exists()) {
+                        loadPropertiesFromLocation(overrideExtensionsLocationAsFile);
+                    } else {
+                        logFileDoesNotExist(overrideExtensionsLocationAsFile, OVERRIDE_EXTENSIONS_LOCATION);
+                    }                    
                 }
             }
         }
