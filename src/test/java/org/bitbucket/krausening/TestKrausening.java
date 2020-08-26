@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Properties;
 
-import org.bitbucket.krausening.Krausening;
 import org.junit.Test;
 
 public class TestKrausening extends AbstractKrauseningTest {

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
@@ -41,9 +42,12 @@ public final class Krausening {
 
     /** Location of a set of extension {@link Properties} files. */
     public static final String EXTENSIONS_LOCATION = "KRAUSENING_EXTENSIONS";
-
+    
     /** Location of a set of classloader/war-specific extensions. */
-    public static final String OVERRIDE_EXTENSIONS_LOCATION = "override.extensions.location";
+    public static final String OVERRIDE_EXTENSIONS_LOCATION = "KRAUSENING_OVERRIDE_EXTENSIONS";
+
+    /** Param for reading in the path for the classloader/war-specific extensions. */
+    public static final String OVERRIDE_EXTENSIONS_LOCATION_PARAM = "override.extensions.location";
 
     /** Value of a set a master encryption password. */
     public static final String KRAUSENING_PASSWORD = "KRAUSENING_PASSWORD";
@@ -122,12 +126,19 @@ public final class Krausening {
             }
 
             if (StringUtils.isNotBlank(overrideExtensionLocation)) {
-                File overrideExtensionsLocationAsFile = new File(overrideExtensionLocation);
+                String baseOverrideLocation = System.getProperty(OVERRIDE_EXTENSIONS_LOCATION);
+                if (StringUtils.isBlank(baseOverrideLocation)) {
+                    LOGGER.warn("No {} set...", OVERRIDE_EXTENSIONS_LOCATION);
+                }
+                
+                // Get the path relative to the override extensions location
+                String overrideExtensionLocationPath = FilenameUtils.concat(baseOverrideLocation, overrideExtensionLocation);
+                
+                File overrideExtensionsLocationAsFile = new File(overrideExtensionLocationPath);
                 if (overrideExtensionsLocationAsFile.exists()) {
                     loadPropertiesFromLocation(overrideExtensionsLocationAsFile);
                 } else {
                     logFileDoesNotExist(overrideExtensionsLocationAsFile, OVERRIDE_EXTENSIONS_LOCATION);
-
                 }
             }
         }
@@ -263,6 +274,8 @@ public final class Krausening {
      * @param overrideExtensionLocation
      */
     protected void setOverrideExtensionsLocation(String overrideExtensionLocation) {
+        
+        // The location of the override extensions within the base override extensions directory
         this.overrideExtensionLocation = overrideExtensionLocation;
     }
 
