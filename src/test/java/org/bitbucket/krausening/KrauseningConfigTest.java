@@ -1,4 +1,4 @@
-package com.ask.krausening;
+package org.bitbucket.krausening;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -19,7 +19,6 @@ import org.aeonbits.owner.KrauseningConfig;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.aeonbits.owner.KrauseningConfigFactory;
 import org.apache.commons.io.IOUtils;
-import org.bitbucket.krausening.Krausening;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -98,6 +97,33 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
         assertNotNull(properties);
         testPropertyKeyValue(properties, A_FOO_PROPERTY_KEY, A_FOO_PROPERTY_VALUE);
         testPropertyKeyValue(properties, NON_EXISTENT_PROPERTY_DEFAULT_KEY, NON_EXISTENT_PROPERTY_DEFAULT_VALUE);
+    }
+
+    @Test
+    public void testGettingOverriddenExtensions() throws Exception {
+
+        // Set up the overridden extensions the way the context listener does
+        Krausening krausening = Krausening.getInstance();
+        krausening.setOverrideExtensionsLocation(OVERRIDDEN_EXTENSIONS_LOCATION + WAR_1_PROPERTIES);
+        krausening.loadProperties();
+
+        // Check that the values are overriding the extensions
+        SinglePropertyFileConfig singlePropertyFileConfig = KrauseningConfigFactory
+                .create(SinglePropertyFileConfig.class);
+        assertNotNull(singlePropertyFileConfig);
+        assertEquals(WAR_1_OVERRIDDEN_PROPERTY_VALUE, singlePropertyFileConfig.getOverriddenProperty());
+
+        // Now try it with war 2 and make sure it updates
+        krausening.setOverrideExtensionsLocation(OVERRIDDEN_EXTENSIONS_LOCATION + WAR_2_PROPERTIES);
+        krausening.loadProperties();
+
+        // Check that the values are what we expect for war 2
+        singlePropertyFileConfig = KrauseningConfigFactory.create(SinglePropertyFileConfig.class);
+        assertNotNull(singlePropertyFileConfig);
+        assertEquals(WAR_2_OVERRIDDEN_PROPERTY_VALUE, singlePropertyFileConfig.getOverriddenProperty());
+
+        krausening.setOverrideExtensionsLocation(null);
+        krausening.loadProperties();
     }
 
     private void testPropertyKeyValue(Properties properties, String expectedKey, Object expectedValue) {

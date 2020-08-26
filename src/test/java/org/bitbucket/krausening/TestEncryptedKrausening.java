@@ -1,4 +1,4 @@
-package com.ask.krausening;
+package org.bitbucket.krausening;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,7 +8,6 @@ import java.util.Properties;
 import org.aeonbits.owner.KrauseningConfig;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.aeonbits.owner.KrauseningConfigFactory;
-import org.bitbucket.krausening.Krausening;
 import org.junit.Before;
 import org.junit.Test;
 
