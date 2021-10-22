@@ -2,7 +2,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.bitbucket.askllc.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.bitbucket.askllc.krausening%22%20AND%20a%3A%22krausening%22)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
 
-In brewing, krausening (KROI-zen-ing) refers to adding a small amount of existing wort to prime finished beer for carbonation.  In Java, Krausening is a project to populate finished archives for deployment.  This approach allows Properties files to be externalized from deployment units, enabling the same deployment unit to be leveraged repeatedly without the need to rebuild or hack the archive.
+In brewing, krausening (KROI-zen-ing) refers to adding a small amount of existing beer to fresh wort to prime the beer for carbonation.  In Java, Krausening is a project to populate finished archives for deployment.  This approach allows Properties files to be externalized from deployment units, enabling the same deployment unit to be leveraged repeatedly without the need to rebuild or hack the archive.
 
 # Krausening in One Pint (Learn Krausening in 2 Minutes)#
 Krausening is very simple.  Follow these steps to prime your project:
@@ -208,7 +208,7 @@ Want Krausening in your project? The following Maven dependency will add it to y
 <dependency>
     <groupId>org.bitbucket.askllc.krausening</groupId>
     <artifactId>krausening</artifactId>
-    <version>8</version>
+    <version>9</version>
 </dependency>
 ```
 
