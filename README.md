@@ -199,16 +199,89 @@ assertEquals("3.1415",properties.getProperty("pi"));
 
 You're now 5 pints in and ready for how ever many more property files you need without having to worry about stumbling through deployment!
 
+# Krausening and Python
+
+Krausening now supports Python! Krausening property management and encryption for Python is packaged using the open-source Python Maven plugin [habushu](https://bitbucket.org/cpointe/habushu/src/dev/). Habushu allows Python libraries to be used within Maven as dependencies, and provides a virtual environment with all specified dependencies and requirements necessary so that builds are repeatable from machine to machine.
+
+## Managing properties with Krausening and Python
+
+Managing properties with Krausening's Python library is much like using Krausening in Java. The same system variables are used to configure Krausening, including:
+
+KRAUSENING_BASE
+KRAUSENING_EXTENSIONS
+KRAUSENING_PASSWORD
+
+The Krausening Python implementation will expect to find these when it looks in the os environment. No defaults are currently configured.
+
+base = os.environ.get('KRAUSENING_BASE', None)
+extension = os.environ.get('KRAUSENING_EXTENSIONS', None)
+password = os.environ.get('KRAUSENING_PASSWORD', None)
+
+In order to use the Python Property Manager, you can either use it directly or extend to configure your own custom methods. For example, in order to use the Poperty  Manager directly, you can load your properties and then read them in.
+
+sample.py
+```
+from krausening.properties import PropertyManager
+
+propertyManager = PropertyManager.get_instance()
+properties = None
+properties = propertyManager.get_properties('my-property-file.properties')
+assert properties['foo'] == 'bar2'
+```
+
+This has the disadvantage that you must know the property keys in order to find the corresponding property values. To get around that, you can instead wrap the Property Manager and write your own custom methods to get the corresponding keys and values, abstracting away the exact key values.
+
+sample-extension.py
+```
+from krausening.properties import PropertyManager
+
+class TestConfig():
+    """
+    Configurations utility class for being able to read in and reload properties
+    """
+
+    def __init__(self):
+        self.properties = None
+        self.reload()
+ 
+    def integration_test_enabled(self):
+        """
+        Returns whether the integration tests are enabled or not
+        """
+        integration_test_enable = False
+        integration_enable_str = self.properties['integration.test.enabled']
+        if (integration_enable_str):
+            integration_test_enable = (integration_enable_str == 'True')
+        return integration_test_enable
+    
+    def reload(self):
+        self.properties = PropertyManager.get_instance().get_properties('test.properties')
+```
+
+## Note: Due to updates the M1 Apple Chip, we strongly recommend using Python >= 3.9 for compatibility reasons.
+
 # Distribution Channel
 
-Want Krausening in your project? The following Maven dependency will add it to your Maven project from the Maven Central Repository:
+Want Krausening in your project? The following Maven dependency will add the Java implementation of Krausening to your Maven project from the Maven Central Repository:
 
 ```
 #!xml
 <dependency>
     <groupId>org.bitbucket.askllc.krausening</groupId>
     <artifactId>krausening</artifactId>
-    <version>9</version>
+    <version>10</version>
+</dependency>
+```
+
+In order to use the Python implementation, use the following Maven dependency:
+
+```
+#!xml
+<dependency>
+   <groupId>org.bitbucket.askllc.krausening</groupId>
+   <artifactId>krausening-python</artifactId>
+   <version>10</version>
+   <type>zip</type>
 </dependency>
 ```
 
