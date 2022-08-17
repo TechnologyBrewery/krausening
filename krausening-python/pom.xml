@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.bitbucket.askllc.krausening</groupId>
@@ -11,15 +12,24 @@
     <description>The Python implementation of Krausening</description>
     <packaging>habushu</packaging>
 
-	<artifactId>krausening-python</artifactId>
+    <artifactId>krausening-python</artifactId>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.bitbucket.cpointe.habushu</groupId>
-				<artifactId>habushu-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.bitbucket.cpointe.habushu</groupId>
+                <artifactId>habushu-maven-plugin</artifactId>
+            </plugin>
+            <!-- Activated via the ossrh-release profile in the root POM, override the
+             maven-gpg-plugin configuration here to ensure that its execution is skipped -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

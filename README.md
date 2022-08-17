@@ -210,8 +210,8 @@ Krausening uses both the `maven-release-plugin` and the `nexus-staging-maven-plu
   <servers>
     <server>
       <id>ossrh</id>
-      <username>your-jira-id</username>
-      <password>your-jira-pwd</password>
+      <username>ossrh-jira-id</username>
+      <password>{encrypted-ossrh-jira-pwd}</password>
     </server>
   </servers>
 </settings>
@@ -225,14 +225,14 @@ Krausening uses both the `maven-release-plugin` and the `nexus-staging-maven-plu
     <server>
       <id>pypi</id>
       <username>pypi-username</username>
-      <password>pypi-password</password>
+      <password>{encrypted-pypi-password}</password>
     </server>
   </servers>
 </settings>
 ```
 
 
-4. Install `gpg` and distribute your key pair - see [here](http://central.sonatype.org/pages/working-with-pgp-signatures.html).  OS X users may need to execute:
+4. Install `gpg` and distribute your key pair - see [here](https://central.sonatype.org/publish/requirements/gpg/).  OS X users may need to execute:
 
 ```shell
 export GPG_TTY=`tty`;
