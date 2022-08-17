@@ -158,8 +158,8 @@ python-versions = ">=3.7"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "3.9.9"
-content-hash = "4ef1b061374235681a306571a30f4efda4b14989fcc8068a79edd36afef1292f"
+python-versions = "3.9.13"
+content-hash = "f9487cfff79dca6e7216c94f59f60ccfe9e26642c384a7991351d664332d2aa3"
 
 [metadata.files]
 behave = [

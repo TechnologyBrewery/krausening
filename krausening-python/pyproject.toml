@@ -2,11 +2,15 @@
 name = "krausening"
 version = "11.dev"
 description = "Python implementation of Krausening"
-authors = ["Your Name <you@example.com>"]
+authors = ["Eric Konieczny <ekonieczny@cpointe-inc.com>"]
 license = "MIT"
+readme = "README.md"
+repository = "https://bitbucket.org/cpointe/krausening"
+
+keywords = ["properties", "configuration-management"]
 
 [tool.poetry.dependencies]
-python = "3.9.9"
+python = "3.9.13"
 javaproperties = "^0.8.1"
 pycryptodome = "^3.14.1"
 

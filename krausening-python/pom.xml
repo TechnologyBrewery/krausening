@@ -8,7 +8,7 @@
     </parent>
 
     <name>Krausening::Krausening Python</name>
-    <description>The Python implementation of krausening</description>
+    <description>The Python implementation of Krausening</description>
     <packaging>habushu</packaging>
 
 	<artifactId>krausening-python</artifactId>
