@@ -56,6 +56,7 @@ class TestConfig():
 ## Distribution Channel
 
 Krausening Python is published to PyPI under the [krausening](https://pypi.org/project/krausening/) project and may be installed using any package installer/manager that leverages PyPI.  For example:
+
   * [Poetry](https://python-poetry.org/) - `poetry add krausening`
   * [pip](https://pip.pypa.io/) - `pip install krausening`
 
