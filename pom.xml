@@ -147,7 +147,10 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    <!-- Automatically release staging repository and make deployed artifacts available on
+                         Maven Central. This mitigates the need to manually log into the OSSRH Nexus instance
+                         and release the staging repository -->
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
