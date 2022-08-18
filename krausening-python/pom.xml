@@ -4,22 +4,31 @@
     <parent>
         <groupId>org.bitbucket.askllc.krausening</groupId>
         <artifactId>krausening-root</artifactId>
-        <version>11-SNAPSHOT</version>
+        <version>12-SNAPSHOT</version>
     </parent>
 
     <name>Krausening::Krausening Python</name>
-    <description>The Python implementation of krausening</description>
+    <description>The Python implementation of Krausening</description>
     <packaging>habushu</packaging>
 
-	<artifactId>krausening-python</artifactId>
+    <artifactId>krausening-python</artifactId>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.bitbucket.cpointe.habushu</groupId>
-				<artifactId>habushu-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.bitbucket.cpointe.habushu</groupId>
+                <artifactId>habushu-maven-plugin</artifactId>
+            </plugin>
+            <!-- Activated via the ossrh-release profile in the root POM, override the
+             maven-gpg-plugin configuration here to ensure that its execution is skipped -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
