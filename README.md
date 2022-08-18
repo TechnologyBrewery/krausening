@@ -4,6 +4,17 @@
 
 In brewing, krausening (KROI-zen-ing) refers to adding a small amount of existing beer to fresh wort to prime the beer for carbonation.  In Java, Krausening is a project to populate finished archives for deployment.  This approach allows Properties files to be externalized from deployment units, enabling the same deployment unit to be leveraged repeatedly without the need to rebuild or hack the archive.
 
+# Requirements
+In order to use Krausening, the following prerequisites must be installed:
+
+* Maven 3.6+
+* Java 8+
+
+For [Krausening Python](https://bitbucket.org/cpointe/krausening/src/dev/krausening-python/), the following must also be installed:
+
+* [Poetry 1.1+](https://python-poetry.org/)
+* [Pyenv](https://github.com/pyenv/pyenv)
+
 # Krausening in One Pint (Learn Krausening in 2 Minutes)#
 Krausening is very simple.  Follow these steps to prime your project:
 
