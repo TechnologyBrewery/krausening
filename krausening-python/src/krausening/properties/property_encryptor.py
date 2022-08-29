@@ -2,7 +2,10 @@ import base64
 import hashlib
 import re
 import os
-from Crypto.Cipher import DES
+
+# from Crypto.Cipher import DES
+
+from cryptography.fernet import Fernet
 
 
 class PropertyEncryptor:
@@ -20,7 +23,10 @@ class PropertyEncryptor:
         for i in range(pad_num):
             msg += chr(pad_num)
         (dk, iv) = self.get_derived_key(password, salt, 1000)
-        crypter = DES.new(dk, DES.MODE_CBC, iv)
+
+        crypter = Fernet(dk)
+
+        # crypter = DES.new(dk, DES.MODE_CBC, iv)
         enc_text = crypter.encrypt(msg)
         return base64.b64encode(salt + enc_text)
 
@@ -29,7 +35,9 @@ class PropertyEncryptor:
         salt = msg_bytes[:8]
         enc_text = msg_bytes[8:]
         (dk, iv) = self.get_derived_key(password, salt, 1000)
-        crypter = DES.new(dk, DES.MODE_CBC, iv)
+        crypter = Fernet(dk)
+        # crypter = DES.new(dk, DES.MODE_CBC, iv)
+
         text = crypter.decrypt(enc_text)
         # remove the padding at the end, if any
         return re.sub(r"[\x01-\x08]", "", text.decode("utf-8"))
