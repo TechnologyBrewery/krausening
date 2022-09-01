@@ -2,44 +2,46 @@ import os
 
 from behave import *
 from krausening.properties import PropertyManager
-
-use_step_matcher("re")
-
-propertyManager = PropertyManager.get_instance()
-properties = None
+from nose.tools import assert_equal
 
 
-@given('a base file with property "foo" and value "bar"')
+@given('a base properties file with property "foo"')
 def step_impl(context):
     os.environ["KRAUSENING_BASE"] = "tests/resources/config/"
     context.file = "test.properties"
 
 
-@given('a base file with property "foo" and an encrypted value for "bar"')
+@given('an extensions properties file with property "foo"')
 def step_impl(context):
-    os.environ["KRAUSENING_BASE"] = "tests/resources/config/"
+    os.environ["KRAUSENING_EXTENSIONS"] = "tests/resources/config_extension/"
+
+
+@given('the properties file contains encrypted value for the "foo" property')
+def step_impl(context):
     os.environ["KRAUSENING_PASSWORD"] = "P455w0rd"
     context.file = "test-encrypted.properties"
 
 
-@when("the property file is loaded")
+@when("the properties file is loaded")
 def step_impl(context):
-    global properties
-    properties = propertyManager.get_properties(context.file)
+    context.properties = PropertyManager.get_instance().get_properties(context.file)
 
 
-@then('the value of "foo" is set to "bar"')
+@then('the retrieved value of "foo" is "bar"')
 def step_impl(context):
-    assert properties["foo"] == "bar"
+    foo_property_value = context.properties["foo"]
+    assert_equal(
+        foo_property_value,
+        "bar",
+        f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
+    )
 
 
-@when('a new property file is read with property "foo" and value "bar2"')
+@then('the retrieved value of "foo" is "bar2"')
 def step_impl(context):
-    os.environ["KRAUSENING_EXTENSIONS"] = "tests/resources/config_extension/"
-    global properties
-    properties = propertyManager.get_properties("test.properties")
-
-
-@then('the property value is set to "bar2"')
-def step_impl(context):
-    assert properties["foo"] == "bar2"
+    foo_property_value = context.properties["foo"]
+    assert_equal(
+        foo_property_value,
+        "bar2",
+        f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
+    )

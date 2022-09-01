@@ -1,42 +1,60 @@
 import base64
-import hashlib
 import re
 import os
-from Crypto.Cipher import DES
+
+from cryptography.hazmat.primitives.hashes import Hash, MD5
+from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.algorithms import TripleDES
+from cryptography.hazmat.primitives.ciphers.modes import CBC
 
 
 class PropertyEncryptor:
     """
-    Class to mimic the standard Jasypt string encryption/decryption.
+    Provides property value encryption/decryption support via PBEWithMD5AndDES, which is the
+    default encryption algorithm used by Jasypt's CLI and StandardPBEByteEncryptor. This aligns with
+    the same approach used for property encryption within the Krausening Java package.
 
-    Modified from: https://github.com/binsgit/PBEWithMD5AndDES/blob/master/python/PBEWithMD5AndDES_2.py
+    As per https://fermenter.atlassian.net/browse/KRAUS-11, later iterations should seek to introduce
+    a more secure encryption algorithm approach.
 
     See https://bitbucket.org/cpointe/krausening/src/dev/ for details on encrypting values with Jasypt.
     """
 
-    def encrypt(self, msg: str, password: bytes) -> bytes:
+    def encrypt(self, value_to_encrypt: str, password: bytes) -> bytes:
         salt = os.urandom(8)
-        pad_num = 8 - (len(msg) % 8)
-        for i in range(pad_num):
-            msg += chr(pad_num)
-        (dk, iv) = self.get_derived_key(password, salt, 1000)
-        crypter = DES.new(dk, DES.MODE_CBC, iv)
-        enc_text = crypter.encrypt(msg)
-        return base64.b64encode(salt + enc_text)
+        (key, init_vector) = self._pbkdf1_md5(password, salt, 1000)
+        cipher = Cipher(TripleDES(key), CBC(init_vector))
+        encryptor = cipher.encryptor()
+        return encryptor.update(value_to_encrypt) + encryptor.finalize()
 
-    def decrypt(self, msg: str, password: bytes) -> str:
-        msg_bytes = base64.b64decode(msg)
+    def decrypt(self, encrypted_msg: str, password: bytes) -> str:
+        msg_bytes = base64.b64decode(encrypted_msg)
         salt = msg_bytes[:8]
         enc_text = msg_bytes[8:]
-        (dk, iv) = self.get_derived_key(password, salt, 1000)
-        crypter = DES.new(dk, DES.MODE_CBC, iv)
-        text = crypter.decrypt(enc_text)
+        (key, init_vector) = self._pbkdf1_md5(password, salt, 1000)
+
+        cipher = Cipher(TripleDES(key), CBC(init_vector))
+        decryptor = cipher.decryptor()
+        text = decryptor.update(enc_text) + decryptor.finalize()
         # remove the padding at the end, if any
         return re.sub(r"[\x01-\x08]", "", text.decode("utf-8"))
 
-    def get_derived_key(self, password: bytes, salt: bytes, count: int) -> tuple:
-        key = password + salt
-        for i in range(count):
-            m = hashlib.md5(key)
-            key = m.digest()
-        return (key[:8], key[8:])
+    def _pbkdf1_md5(self, password, salt, iterations):
+        """
+        Provides a Password Based Key Derivation Function (PBKDF1) as defined in RFC 2829
+        (https://www.rfc-editor.org/rfc/rfc2898#section-5.1) that applies a MD5 hash function
+        to derive a key from the given password.
+        """
+        digest = Hash(MD5())
+        digest.update(password)
+        digest.update(salt)
+
+        key = None
+        for i in range(iterations):
+            key = digest.finalize()
+            digest = Hash(MD5())
+            digest.update(key)
+
+        digest.finalize()
+
+        return key[:8], key[8:16]
