@@ -83,7 +83,8 @@ class Properties(JavaProperties):
 class EncryptableProperties(Properties):
     """
     This class represents a properties file that can decrypt property values that have been encrypted
-    with Jasypt, and is based on Jaspyt's EncryptableProperties.
+    via PBEWithMD5AndDES, which is the default encryption algorithm used by Jasypt's CLI and StandardPBEByteEncryptor.
+    This class is largely based on Jaspyt's EncryptableProperties.
 
     See https://bitbucket.org/cpointe/krausening/src/dev/ for details on encrypting values with Jasypt.
     """

@@ -13,13 +13,11 @@ keywords = ["properties", "configuration-management"]
 python = "3.9.13"
 javaproperties = "^0.8.1"
 cryptography = "^37.0.4"
-typing_extensions = "^4.1.1"
-pycryptodome = "^3.15.0"
 
 [tool.poetry.dev-dependencies]
 behave = "^1.2.6"
-nose = "^1.3.7"
 black = "^22.6.0"
+nose = "^1.3.7"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

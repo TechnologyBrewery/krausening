@@ -1,7 +1,10 @@
 import os
 
 
-def after_feature(context, feature):
-    if "properties" == feature.name:
-        os.environ["KRAUSENING_BASE"] = None
-        os.environ["KRAUSENING_EXTENSION"] = None
+def before_scenario(context, scenario):
+    """
+    Clear all Krausening environment variables prior to each scenario.
+    """
+    os.environ["KRAUSENING_BASE"] = ""
+    os.environ["KRAUSENING_EXTENSIONS"] = ""
+    os.environ["KRAUSENING_PASSWORD"] = ""
