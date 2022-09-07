@@ -1,6 +1,9 @@
 # Krausening Python - Externalized Property Management and Access for Python Projects #
-![PyPI](https://img.shields.io/pypi/v/krausening)
+[![PyPI](https://img.shields.io/pypi/v/krausening)](https://pypi.org/project/krausening/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/krausening)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/krausening)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
+
 
  Krausening property management and encryption for Python is packaged using the open-source Python Maven plugin [Habushu](https://bitbucket.org/cpointe/habushu) and made available as a [PyPI package](https://pypi.org/project/krausening/).  
 

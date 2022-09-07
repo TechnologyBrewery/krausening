@@ -1,6 +1,9 @@
-# Krausening - Externalized Property Management and Access #
-[![Maven Central](https://img.shields.io/maven-central/v/org.bitbucket.askllc.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.bitbucket.askllc.krausening%22%20AND%20a%3A%22krausening%22)
+# Krausening - Externalized Property Management and Access for Java and Python #
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
+[![Maven Central](https://img.shields.io/maven-central/v/org.bitbucket.askllc.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.bitbucket.askllc.krausening%22%20AND%20a%3A%22krausening%22)
+[![PyPI](https://img.shields.io/pypi/v/krausening)](https://pypi.org/project/krausening/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/krausening)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/krausening)
 
 In brewing, krausening (KROI-zen-ing) refers to adding a small amount of existing beer to fresh wort to prime the beer for carbonation.  In Java, Krausening is a project to populate finished archives for deployment.  This approach allows Properties files to be externalized from deployment units, enabling the same deployment unit to be leveraged repeatedly without the need to rebuild or hack the archive.
 
