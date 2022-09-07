@@ -10,7 +10,7 @@ repository = "https://bitbucket.org/cpointe/krausening"
 keywords = ["properties", "configuration-management"]
 
 [tool.poetry.dependencies]
-python = "3.9.13"
+python = "^3.9"
 javaproperties = "^0.8.1"
 cryptography = "^37.0.4"
 
