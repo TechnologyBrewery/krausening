@@ -17,3 +17,9 @@ Feature: Property Management
     And the properties file contains encrypted value for the "foo" property
     When the properties file is loaded
     Then the retrieved value of "foo" is "bar"
+
+  Scenario: Property value can be encrypted and decrypted back to the same value
+    Given a base properties file with property "foo"
+    And encrypt the "foo" property value
+    When decrypt the encrypted "foo" property value
+    And the decrypted value matches original value "bar"

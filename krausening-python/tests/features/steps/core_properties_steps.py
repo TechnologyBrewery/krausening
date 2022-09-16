@@ -45,3 +45,24 @@ def step_impl(context):
         "bar2",
         f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
     )
+
+
+@given('encrypt the "foo" property value')
+def step_impl(context):
+    os.environ["KRAUSENING_PASSWORD"] = "P455w0rd"
+    context.properties = PropertyManager.get_instance().get_properties(context.file)
+    context.encrypted_value = context.properties._encrypt("foo")
+
+
+@when('decrypt the encrypted "foo" property value')
+def step_impl(context):
+    context.decrypted_value = context.properties._decrypt(context.encrypted_value)
+
+
+@when('the decrypted value matches original value "bar"')
+def step_impl(context):
+    assert_equal(
+        context.decrypted_value,
+        "bar",
+        f"Decrypted the encrypted property value , which is {context.decrypted_value}, didn't match expected value",
+    )

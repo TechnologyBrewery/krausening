@@ -1,60 +1,65 @@
-import base64
-import re
 import os
-
-from cryptography.hazmat.primitives.hashes import Hash, MD5
-from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.ciphers.algorithms import TripleDES
-from cryptography.hazmat.primitives.ciphers.modes import CBC
+from base64 import b64decode, b64encode
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.padding import PKCS7
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
 class PropertyEncryptor:
     """
-    Provides property value encryption/decryption support via PBEWithMD5AndDES, which is the
-    default encryption algorithm used by Jasypt's CLI and StandardPBEByteEncryptor. This aligns with
+    Provides property value encryption/decryption support via PBEWITHHMACSHA512ANDAES_256. This aligns with
     the same approach used for property encryption within the Krausening Java package.
 
-    As per https://fermenter.atlassian.net/browse/KRAUS-11, later iterations should seek to introduce
-    a more secure encryption algorithm approach.
+    Reference: https://resultfor.dev/359470-implement-pbewithhmacsha512andaes-256-of-java-jasypt-in-python.
 
     See https://bitbucket.org/cpointe/krausening/src/dev/ for details on encrypting values with Jasypt.
     """
 
     def encrypt(self, value_to_encrypt: str, password: bytes) -> bytes:
-        salt = os.urandom(8)
-        (key, init_vector) = self._pbkdf1_md5(password, salt, 1000)
-        cipher = Cipher(TripleDES(key), CBC(init_vector))
-        encryptor = cipher.encryptor()
-        return encryptor.update(value_to_encrypt) + encryptor.finalize()
+        return self.encrypt_pbe_with_hmac_sha512_aes_256(value_to_encrypt, password)
 
     def decrypt(self, encrypted_msg: str, password: bytes) -> str:
-        msg_bytes = base64.b64decode(encrypted_msg)
-        salt = msg_bytes[:8]
-        enc_text = msg_bytes[8:]
-        (key, init_vector) = self._pbkdf1_md5(password, salt, 1000)
+        return self.decrypt_pbe_with_hmac_sha512_aes_256(encrypted_msg, password)
 
-        cipher = Cipher(TripleDES(key), CBC(init_vector))
+    def decrypt_pbe_with_hmac_sha512_aes_256(
+        self, encrypted_msg: str, masterKey: bytes
+    ) -> str:
+        # re-generate key from
+        encrypted_obj = b64decode(encrypted_msg)
+        salt = encrypted_obj[0:16]
+        iv = encrypted_obj[16:32]
+        cypher_text = encrypted_obj[32:]
+        kdf = PBKDF2HMAC(hashes.SHA512(), 32, salt, 1000, backend=default_backend())
+        key = kdf.derive(masterKey)
+
+        # decrypt
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
         decryptor = cipher.decryptor()
-        text = decryptor.update(enc_text) + decryptor.finalize()
-        # remove the padding at the end, if any
-        return re.sub(r"[\x01-\x08]", "", text.decode("utf-8"))
+        padded_text = decryptor.update(cypher_text) + decryptor.finalize()
 
-    def _pbkdf1_md5(self, password, salt, iterations):
-        """
-        Provides a Password Based Key Derivation Function (PBKDF1) as defined in RFC 2829
-        (https://www.rfc-editor.org/rfc/rfc2898#section-5.1) that applies a MD5 hash function
-        to derive a key from the given password.
-        """
-        digest = Hash(MD5())
-        digest.update(password)
-        digest.update(salt)
+        # remove padding
+        unpadder = PKCS7(128).unpadder()
+        clear_text = unpadder.update(padded_text) + unpadder.finalize()
+        return clear_text.decode()
 
-        key = None
-        for i in range(iterations):
-            key = digest.finalize()
-            digest = Hash(MD5())
-            digest.update(key)
+    def encrypt_pbe_with_hmac_sha512_aes_256(
+        self, value_to_encrypt: str, masterKey: bytes
+    ) -> str:
+        # generate key
+        salt = os.urandom(16)
+        iv = os.urandom(16)
+        kdf = PBKDF2HMAC(hashes.SHA512(), 32, salt, 1000, backend=default_backend())
+        key = kdf.derive(masterKey)
 
-        digest.finalize()
+        # pad data
+        padder = PKCS7(128).padder()
+        data = padder.update(value_to_encrypt.encode()) + padder.finalize()
 
-        return key[:8], key[8:16]
+        # encrypt
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+        encryptor = cipher.encryptor()
+        cypher_text = encryptor.update(data) + encryptor.finalize()
+
+        return b64encode(salt + iv + cypher_text).decode()
