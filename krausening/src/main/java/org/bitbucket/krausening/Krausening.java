@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.properties.EncryptableProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -275,6 +276,10 @@ public final class Krausening {
             // TODO: could externalize this so the type is configurable:
             StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
             encryptor.setPassword(System.getProperty(KRAUSENING_PASSWORD));
+            // Use PBEWithHMACSHA512AndAES_256 cipher algorithm for more secure encryption
+            encryptor.setAlgorithm("PBEWithHMACSHA512AndAES_256");
+            encryptor.setIvGenerator(new RandomIvGenerator());
+
             properties = new EncryptableProperties(encryptor);
 
         } else {

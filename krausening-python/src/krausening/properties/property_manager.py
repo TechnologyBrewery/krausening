@@ -82,9 +82,10 @@ class Properties(JavaProperties):
 
 class EncryptableProperties(Properties):
     """
-    This class represents a properties file that can decrypt property values that have been encrypted
-    via PBEWithMD5AndDES, which is the default encryption algorithm used by Jasypt's CLI and StandardPBEByteEncryptor.
-    This class is largely based on Jaspyt's EncryptableProperties.
+    Provides property value encryption/decryption support via PBEWITHHMACSHA512ANDAES_256. This aligns with
+    the same approach used for property encryption within the Krausening Java package.
+
+    Reference: https://resultfor.dev/359470-implement-pbewithhmacsha512andaes-256-of-java-jasypt-in-python.
 
     See https://bitbucket.org/cpointe/krausening/src/dev/ for details on encrypting values with Jasypt.
     """
@@ -113,3 +114,14 @@ class EncryptableProperties(Properties):
                 value = self.__encryptor.decrypt(encrypted_value, password_bytes)
 
         return value
+
+    def _encrypt(self, key: str) -> bytes:
+        value = self.get(key)
+        password_bytes = self.__password.encode()
+        encrypted_value = self.__encryptor.encrypt(value, password_bytes)
+        return encrypted_value
+
+    def _decrypt(self, value: str):
+        password_bytes = self.__password.encode()
+        decrypted_value = self.__encryptor.decrypt(value, password_bytes)
+        return decrypted_value

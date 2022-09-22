@@ -125,10 +125,27 @@ Frequently, it is useful to store encrypted information within properties files.
 KRAUSENING_PASSWORD=myMasterPassword
 ```
 
-2.  [Use Jasypt to encrypt your property information](http://www.jasypt.org/cli.html), then add the [encrypted value in your properties file via the Jasypt format](http://www.jasypt.org/encrypting-configuration.html):
-```properties
-password=ENC(2/O4g9ktLtJLWYyP8RlEhBfhVxuSL0fnBlOVmXI+qRw=)
-```
+2. Use Jasypt to encrypt your property information with PBEWITHHMACSHA512ANDAES_256 algorithm
+   
+     * 1- Download the [Jasypt CLI Tools](http://www.jasypt.org/cli.html)
+
+     * 2- Run the encrypt.sh to encrypt the password with following arguments
+        - **password**: The master password
+        - **input**: The content needs to be encrypted
+        - **algorithm**: Use `PBEWITHHMACSHA512ANDAES_256` for more secure encryption
+        - **ivGeneratorClassName**: Use `org.jasypt.iv.RandomIvGenerator`; this is needed to fix the jasypt bug (ref: https://github.com/jasypt/jasypt/issues/8)
+        ```shell
+        ./encrypt.sh \
+           password=myMasterPassword \
+           input=someStrongPassword \
+           algorithm=PBEWITHHMACSHA512ANDAES_256 \
+           ivGeneratorClassName=org.jasypt.iv.RandomIvGenerator
+        ```
+     * 3- Add the [encrypted value in your properties file via the Jasypt format](http://www.jasypt.org/encrypting-configuration.html):
+
+        ```properties
+         password=ENC(cg6SE/H0moCnAg0suZwGKaZqguaemAQlf6RGU9NYfOdB+Q0MUtQsjfEVAkJS288n7wXXP1B6fEC9YqIYJM3dWw==)
+        ```
 
 3. When you look for your property, you'll now get the decrypted value:
 ```java
