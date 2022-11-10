@@ -1,5 +1,7 @@
 import os
 
+from krausening.properties import PropertyManager
+
 
 def before_scenario(context, scenario):
     """

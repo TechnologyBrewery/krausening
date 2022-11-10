@@ -12,7 +12,8 @@ keywords = ["properties", "configuration-management"]
 [tool.poetry.dependencies]
 python = "^3.9"
 javaproperties = "^0.8.1"
-cryptography = "^37.0.4"
+cryptography = "^38.0.3"
+watchdog = "^2.1.9"
 
 [tool.poetry.dev-dependencies]
 behave = "^1.2.6"
