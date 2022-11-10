@@ -3,8 +3,27 @@ from javaproperties import Properties as JavaProperties
 from krausening.logging import LogManager
 from krausening.properties import PropertyEncryptor
 from typing import Optional, TypeVar
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
 
 T = TypeVar("T")
+
+
+class FileUpdateEventHandler(FileSystemEventHandler):
+    def __init__(self, base_path):
+        self._logger = LogManager.get_instance().get_logger("FileWatcher")
+        self._base_path = os.path.abspath(base_path)
+        self._logger.info(f"File Watcher started on {self._base_path}")
+
+    def on_modified(self, event):
+        file_path = event.src_path.replace(self._base_path, "")
+        if file_path.startswith("/"):
+            file_path = file_path[1:]
+        if PropertyManager.get_instance().is_loaded(file_path):
+            self._logger.warn(
+                f"Detected a file update in {event.src_path}!  Triggering update..."
+            )
+            PropertyManager.get_instance().get_properties(file_path, force_reload=True)
 
 
 class PropertyManager:
@@ -26,8 +45,33 @@ class PropertyManager:
         else:
             PropertyManager.__instance = self
         self._logger = LogManager.get_instance().get_logger("PropertyManager")
+        self._property_cache = {}
 
-    def get_properties(self, file_name: str):
+        if os.environ.get("KRAUSENING_BASE", None) is not None:
+            self._base_observer = Observer()
+            self._base_observer.schedule(
+                FileUpdateEventHandler(os.environ.get("KRAUSENING_BASE")),
+                os.environ.get("KRAUSENING_BASE"),
+                recursive=True,
+            )
+            self._base_observer.start()
+
+        if (
+            os.environ.get("KRAUSENING_EXTENSIONS", None) is not None
+            and os.environ.get("KRAUSENING_EXTENSIONS") != ""
+        ):
+            self._extension_observer = Observer()
+            self._extension_observer.schedule(
+                FileUpdateEventHandler(os.environ.get("KRAUSENING_EXTENSIONS")),
+                os.environ.get("KRAUSENING_EXTENSIONS"),
+                recursive=True,
+            )
+            self._extension_observer.start()
+
+    def get_properties(self, file_name: str, force_reload=False):
+        if file_name in self._property_cache and not force_reload:
+            return self._property_cache[file_name]
+
         base = os.environ.get("KRAUSENING_BASE", None)
         extension = os.environ.get("KRAUSENING_EXTENSIONS", None)
         password = os.environ.get("KRAUSENING_PASSWORD", None)
@@ -35,6 +79,9 @@ class PropertyManager:
             properties = EncryptableProperties(password)
         else:
             properties = Properties()
+
+        if file_name not in self._property_cache:
+            self._property_cache[file_name] = properties
 
         if base is not None:
             try:
@@ -56,7 +103,12 @@ class PropertyManager:
                     "No extension file found for {0}{1}".format(base, file_name)
                 )
 
-        return properties
+        self._property_cache[file_name].update(properties)
+
+        return self._property_cache[file_name]
+
+    def is_loaded(self, file_name):
+        return file_name in self._property_cache
 
 
 class Properties(JavaProperties):
@@ -72,12 +124,12 @@ class Properties(JavaProperties):
 
     def getProperty(self, key: str, defaultValue: Optional[T] = None):
         try:
-            return self.data[key]
+            return os.path.expandvars(self.data[key])
         except KeyError:
             if self.defaults is not None:
-                return self.defaults.getProperty(key, defaultValue)
+                return os.path.expandvars(self.defaults.getProperty(key, defaultValue))
             else:
-                return defaultValue
+                return os.path.expandvars(defaultValue)
 
 
 class EncryptableProperties(Properties):
@@ -113,7 +165,7 @@ class EncryptableProperties(Properties):
                 password_bytes = self.__password.encode()
                 value = self.__encryptor.decrypt(encrypted_value, password_bytes)
 
-        return value
+        return os.path.expandvars(value)
 
     def _encrypt(self, key: str) -> bytes:
         value = self.get(key)

@@ -23,3 +23,9 @@ Feature: Property Management
     And encrypt the "foo" property value
     When decrypt the encrypted "foo" property value
     And the decrypted value matches original value "bar"
+
+  Scenario: Property value contains an environment variable
+    Given an environment variable "TEST_VAR" is set
+    And a properties file contains a value "test" referencing the TEST_VAR environment variable
+    When the properties file is loaded
+    Then the value of TEST_VAR will be substituted into the value of test
