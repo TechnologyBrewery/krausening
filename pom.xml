@@ -1,5 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+    <parent>
+        <groupId>org.technologybrewery</groupId>
+        <artifactId>parent</artifactId>
+        <version>1-SNAPSHOT</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.bitbucket.askllc.krausening</groupId>
     <artifactId>krausening-root</artifactId>
@@ -12,7 +18,7 @@
         packages, these packages can be easily reused as-is to deploy to heterogeneous environments, circumventing
         the need to hack apart or rebuild the package to support property file modification.
     </description>
-    <url>https://bitbucket.org/askllc/krausening</url>
+    <url>https://github.com/TechnologyBrewery/krausening</url>
 
     <licenses>
         <license>
@@ -26,8 +32,8 @@
         <developer>
             <name>Ryan Ashcraft</name>
             <email>dryanashcraft@gmail.com</email>
-            <organization>Counterpointe Solutions, Inc.</organization>
-            <organizationUrl>https://bitbucket.org/cpointe/</organizationUrl>
+            <organization>CodifyIQ</organization>
+            <organizationUrl>https://codifyiq.com</organizationUrl>
         </developer>
         <developer>
             <name>Eric Konieczny</name>
@@ -38,9 +44,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:ssh://git@bitbucket.org/cpointe/krausening.git</connection>
-        <developerConnection>scm:git:ssh://git@bitbucket.org/cpointe/krausening.git</developerConnection>
-        <url>https://bitbucket.org/cpointe/krausening.git</url>
+        <connection>scm:git:git@github.com:TechnologyBrewery/krausening.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:TechnologyBrewery/krausening.gitt</developerConnection>
+        <url>https://github.com/TechnologyBrewery/krausening.git</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -71,17 +77,13 @@
                     <version>${version.habushu.plugin}</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <pythonVersion>3.9.13</pythonVersion>
+                        <pythonVersion>3.9.14</pythonVersion>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.10.1</version>
-                    <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
