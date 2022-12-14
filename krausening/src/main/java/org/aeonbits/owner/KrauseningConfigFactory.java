@@ -1,19 +1,13 @@
 package org.aeonbits.owner;
 
-import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+import org.aeonbits.owner.loaders.Loader;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 
-import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
-import org.aeonbits.owner.loaders.Loader;
-import org.bitbucket.krausening.Krausening;
-import org.bitbucket.krausening.KrauseningException;
+import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 
 /**
  * {@link KrauseningConfigFactory} is largely modeled after {@link ConfigFactory} and provides a simple, straightforward
@@ -57,24 +51,6 @@ public final class KrauseningConfigFactory {
 	public static <T extends KrauseningConfig> T create(Class<? extends T> clazz, Map<?, ?>... imports) {
 		return INSTANCE.create(clazz, imports);
 	}
-	
-    /**
-     * Creates a {@link KrauseningConfig} instance from the specified interface and an overloaded properties file name.
-     * 
-     * @param clazz
-     *            the interface extending from {@link KrauseningConfig} that you want to instantiate.
-     * @param newPropertiesFile
-     *              the new properties file name to use for the class
-     * @param imports
-     *            additional variables to be used to resolve the properties.
-     * @param <T>
-     *            type of the interface.
-     * @return an object implementing the given interface, which maps methods to property values.
-     */
-    public static <T extends KrauseningConfig> T create(Class<? extends T> clazz, String newPropertiesFile, Map<?, ?>... imports) {
-        alterPropertyAnnotationName(clazz, newPropertiesFile);
-        return INSTANCE.create(clazz, imports);
-    }
 
 	/**
 	 * Set a property in the {@link KrauseningConfigFactory}. Those properties will be used to expand variables
@@ -135,7 +111,7 @@ public final class KrauseningConfigFactory {
 
 	/**
 	 * Registers a loader to enables additional file formats. Currently, *.properties files are handled by
-	 * {@link Krausening}, while *.xml files are handled by one of OWNER's {@link org.aeonbits.owner.loaders.XMLLoader}.
+	 * {@link org.bitbucket.krausening.Krausening}, while *.xml files are handled by one of OWNER's {@link org.aeonbits.owner.loaders.XMLLoader}.
 	 * 
 	 * @param loader
 	 *            the loader to register.
@@ -145,29 +121,5 @@ public final class KrauseningConfigFactory {
 	public static void registerLoader(Loader loader) {
 		INSTANCE.registerLoader(loader);
 	}
-	
-    /**
-     * Overrides the {@link KrauseningSources} properties file name for the {@link KrauseningConfig} class in question.
-     * @param targetConfigClass config class to change
-     * @param propertiesFileName new properties file name
-     */
-    private static void alterPropertyAnnotationName(Class<? extends KrauseningConfig> targetConfigClass,
-            String propertiesFileName) {
-        try {
-            ExtendedKrauseningSources updatedSources = new ExtendedKrauseningSources(propertiesFileName);
-
-            Method method = Class.class.getDeclaredMethod("annotationData", null);
-            method.setAccessible(true);
-            Object annotationData = method.invoke(targetConfigClass);
-            Field annotations = annotationData.getClass().getDeclaredField("annotations");
-            annotations.setAccessible(true);
-            Map<Class<? extends Annotation>, Annotation> map = (Map<Class<? extends Annotation>, Annotation>) annotations
-                    .get(annotationData);
-            map.put(KrauseningSources.class, updatedSources);
-        } catch (Exception e) {
-            throw new KrauseningException(
-                    "Could not update " + targetConfigClass.getSimpleName() + " @KrauseningSources property!", e);
-        }
-    }	
 
 }

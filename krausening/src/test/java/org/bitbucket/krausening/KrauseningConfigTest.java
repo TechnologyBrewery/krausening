@@ -81,26 +81,6 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
     }
 
     @Test
-    public void testRenamingProperties() throws Exception {
-        SinglePropertyFileConfig singlePropertyFileConfig = KrauseningConfigFactory
-                .create(SinglePropertyFileConfig.class, "a-example.properties");
-        assertNotNull(singlePropertyFileConfig);
-        assertEquals(A_FOO_PROPERTY_VALUE, singlePropertyFileConfig.getFoo());
-    }
-
-    @Test
-    public void testGettingProperties() throws Exception {
-        SinglePropertyFileConfig singlePropertyFileConfig = KrauseningConfigFactory
-                .create(SinglePropertyFileConfig.class, "a-example.properties");
-        assertNotNull(singlePropertyFileConfig);
-        Properties properties = new Properties();
-        singlePropertyFileConfig.fill(properties);
-        assertNotNull(properties);
-        testPropertyKeyValue(properties, A_FOO_PROPERTY_KEY, A_FOO_PROPERTY_VALUE);
-        testPropertyKeyValue(properties, NON_EXISTENT_PROPERTY_DEFAULT_KEY, NON_EXISTENT_PROPERTY_DEFAULT_VALUE);
-    }
-
-    @Test
     public void testGettingOverriddenExtensions() throws Exception {
 
         // Set up the overridden extensions the way the context listener does
