@@ -3,11 +3,18 @@ from javaproperties import Properties as JavaProperties
 from krausening.logging import LogManager
 from krausening.properties import PropertyEncryptor
 from typing import Optional, TypeVar
+from platform import uname
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-from watchdog.observers.polling import PollingObserver
-import platform
-import time
+
+
+def in_wsl() -> bool:
+    return "microsoft-standard" in uname().release
+
+
+# Use polling observer if in WSL due to watchdog observer currently not correctly detecting changes
+if in_wsl():
+    from watchdog.observers.polling import PollingObserver as Observer
 
 T = TypeVar("T")
 
@@ -17,15 +24,14 @@ class FileUpdateEventHandler(FileSystemEventHandler):
         self._logger = LogManager.get_instance().get_logger("FileWatcher")
         self._base_path = os.path.abspath(base_path)
         self._logger.info(f"File Watcher started on {self._base_path}")
-        self._machine_type = platform.machine().lower()
 
     def on_modified(self, event):
 
         file_path = event.src_path.replace(self._base_path, "")
-        ## testing for windows machine since watchdog acts differently with x86_64 else continue as normal
-        ## if x86_64 we need only the file name and not the whole path
 
-        if self._machine_type == "x86_64":
+        ## testing for WSL since watchdog acts differently with WSL else continue as normal
+        ## if in WSL we need only the file name and not the whole path
+        if in_wsl():
             last_index = file_path.rfind("/")
             if last_index != -1:
                 self._logger.info(
@@ -66,18 +72,8 @@ class PropertyManager:
         self._logger = LogManager.get_instance().get_logger("PropertyManager")
         self._property_cache = {}
 
-        self._machine_type = platform.machine().lower()
-        self._extension_observer = None
-        self._base_observer = None
-        # Use polling observer if x86_64 due to watchdog observer currently not correctly detecting changes
-        if self._machine_type == "x86_64":
-            self._base_observer = PollingObserver()
-            self._extension_observer = PollingObserver()
-        else:
-            self._base_observer = Observer()
-            self._extension_observer = Observer()
-
         if os.environ.get("KRAUSENING_BASE", None) is not None:
+            self._base_observer = Observer()
             self._base_observer.schedule(
                 FileUpdateEventHandler(os.environ.get("KRAUSENING_BASE")),
                 os.environ.get("KRAUSENING_BASE"),
@@ -89,6 +85,7 @@ class PropertyManager:
             os.environ.get("KRAUSENING_EXTENSIONS", None) is not None
             and os.environ.get("KRAUSENING_EXTENSIONS") != ""
         ):
+            self._extension_observer = Observer()
             self._extension_observer.schedule(
                 FileUpdateEventHandler(os.environ.get("KRAUSENING_EXTENSIONS")),
                 os.environ.get("KRAUSENING_EXTENSIONS"),
