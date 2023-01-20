@@ -5,6 +5,10 @@ from krausening.properties import PropertyManager
 from nose.tools import assert_equal
 
 
+def bar_num_assert(foo_property_value, bar_num_str):
+    bar_val = "bar" + bar_num_str
+
+
 @given('a base properties file with property "foo"')
 def step_impl(context):
     os.environ["KRAUSENING_BASE"] = "tests/resources/config/"
@@ -14,6 +18,11 @@ def step_impl(context):
 @given('an extensions properties file with property "foo"')
 def step_impl(context):
     os.environ["KRAUSENING_EXTENSIONS"] = "tests/resources/config_extension/"
+
+
+@given('a context-specific override properties file with property "foo"')
+def step_impl(context):
+    os.environ["KRAUSENING_OVERRIDES"] = "tests/resources/config_override/"
 
 
 @given('the properties file contains encrypted value for the "foo" property')
@@ -42,22 +51,12 @@ def step_impl(context):
     )
 
 
-@then('the retrieved value of "foo" is "bar"')
-def step_impl(context):
-    foo_property_value = context.properties["foo"]
+@then('the retrieved value of "{foo}" is "{bar_val}"')
+def step_impl(context, foo, bar_val):
+    foo_property_value = context.properties[foo]
     assert_equal(
         foo_property_value,
-        "bar",
-        f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
-    )
-
-
-@then('the retrieved value of "foo" is "bar2"')
-def step_impl(context):
-    foo_property_value = context.properties["foo"]
-    assert_equal(
-        foo_property_value,
-        "bar2",
+        bar_val,
         f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
     )
 

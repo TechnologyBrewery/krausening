@@ -93,12 +93,25 @@ class PropertyManager:
             )
             self._extension_observer.start()
 
+        if (
+            os.environ.get("KRAUSENING_OVERRIDES", None) is not None
+            and os.environ.get("KRAUSENING_OVERRIDES") != ""
+        ):
+            self._extension_observer = Observer()
+            self._extension_observer.schedule(
+                FileUpdateEventHandler(os.environ.get("KRAUSENING_OVERRIDES")),
+                os.environ.get("KRAUSENING_OVERRIDES"),
+                recursive=True,
+            )
+            self._extension_observer.start()
+
     def get_properties(self, file_name: str, force_reload=False):
         if file_name in self._property_cache and not force_reload:
             return self._property_cache[file_name]
 
         base = os.environ.get("KRAUSENING_BASE", None)
         extension = os.environ.get("KRAUSENING_EXTENSIONS", None)
+        override = os.environ.get("KRAUSENING_OVERRIDES", None)
         password = os.environ.get("KRAUSENING_PASSWORD", None)
         if password is not None:
             properties = EncryptableProperties(password)
@@ -123,6 +136,16 @@ class PropertyManager:
                 if not extension.endswith("/"):
                     extension = extension + "/"
                 properties.load(open("{0}{1}".format(extension, file_name)))
+            except FileNotFoundError:
+                self._logger.warn(
+                    "No extension file found for {0}{1}".format(base, file_name)
+                )
+
+        if override is not None:
+            try:
+                if not override.endswith("/"):
+                    override = override + "/"
+                properties.load(open("{0}{1}".format(override, file_name)))
             except FileNotFoundError:
                 self._logger.warn(
                     "No extension file found for {0}{1}".format(base, file_name)
