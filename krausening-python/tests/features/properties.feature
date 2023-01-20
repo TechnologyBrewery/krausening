@@ -1,4 +1,3 @@
-@set_up_environment
 @properties
 Feature: Property Management
 

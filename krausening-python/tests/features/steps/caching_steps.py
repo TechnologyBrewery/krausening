@@ -13,14 +13,12 @@ def step_impl(context):
     context.properties = PropertyManager.get_instance().get_properties(
         context.file, force_reload=True
     )
-    # print("\nhello world\n")
 
 
 @when('the value of "foo" is changed')
 def step_impl(context):
     context.new_foo_value = "new_value"
     context.properties["foo"] = context.new_foo_value
-    # print("\nhello world\n")
 
 
 @then("subsequent retrievals of the property file will reflect the changed value")
