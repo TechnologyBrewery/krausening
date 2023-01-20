@@ -51,9 +51,9 @@ def step_impl(context):
     )
 
 
-@then('the retrieved value of "foo" is "{bar_val}"')
-def step_impl(context, bar_val):
-    foo_property_value = context.properties["foo"]
+@then('the retrieved value of "{foo}" is "{bar_val}"')
+def step_impl(context, foo, bar_val):
+    foo_property_value = context.properties[foo]
     assert_equal(
         foo_property_value,
         bar_val,
