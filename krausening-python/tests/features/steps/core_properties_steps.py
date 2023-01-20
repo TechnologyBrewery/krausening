@@ -7,11 +7,7 @@ from nose.tools import assert_equal
 
 def bar_num_assert(foo_property_value, bar_num_str):
     bar_val = "bar" + bar_num_str
-    assert_equal(
-        foo_property_value,
-        bar_val,
-        f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
-    )
+
 
 @given('a base properties file with property "foo"')
 def step_impl(context):
@@ -55,22 +51,14 @@ def step_impl(context):
     )
 
 
-@then('the retrieved value of "foo" is "bar"')
-def step_impl(context):
+@then('the retrieved value of "foo" is "{bar_val}"')
+def step_impl(context, bar_val):
     foo_property_value = context.properties["foo"]
-    bar_num_assert(foo_property_value, "")
-
-
-@then('the retrieved value of "foo" is "bar2"')
-def step_impl(context):
-    foo_property_value = context.properties["foo"]
-    bar_num_assert(foo_property_value, "2")
-
-
-@then('the retrieved value of "foo" is "bar3"')
-def step_impl(context):
-    foo_property_value = context.properties["foo"]
-    bar_num_assert(foo_property_value, "3")
+    assert_equal(
+        foo_property_value,
+        bar_val,
+        f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
+    )
 
 
 @given('encrypt the "foo" property value')
