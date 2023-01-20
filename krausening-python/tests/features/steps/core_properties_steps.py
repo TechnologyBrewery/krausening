@@ -16,6 +16,11 @@ def step_impl(context):
     os.environ["KRAUSENING_EXTENSIONS"] = "tests/resources/config_extension/"
 
 
+@given('a context-specific override properties file with property "foo"')
+def step_impl(context):
+    os.environ["KRAUSENING_OVERRIDES"] = "tests/resources/config_override/"
+
+
 @given('the properties file contains encrypted value for the "foo" property')
 def step_impl(context):
     os.environ["KRAUSENING_PASSWORD"] = "P455w0rd"
@@ -58,6 +63,16 @@ def step_impl(context):
     assert_equal(
         foo_property_value,
         "bar2",
+        f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
+    )
+
+
+@then('the retrieved value of "foo" is "bar3"')
+def step_impl(context):
+    foo_property_value = context.properties["foo"]
+    assert_equal(
+        foo_property_value,
+        "bar3",
         f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
     )
 
