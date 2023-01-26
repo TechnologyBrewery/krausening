@@ -216,6 +216,9 @@ You're now 5 pints in and ready for how ever many more property files you need w
 
 See the [krausening-python README](https://bitbucket.org/cpointe/krausening/src/dev/krausening-python/) for more details.
 
+# Contributions
+See the CONTRIBUTING.md file in the Krausening root directory for release instructions and general architecture information.
+
 # Distribution Channel
 
 Want Krausening in your project? The following Maven dependency will add the Java implementation of Krausening to your Maven project from the Maven Central Repository:

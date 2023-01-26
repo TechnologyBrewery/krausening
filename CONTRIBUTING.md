@@ -91,4 +91,4 @@ org
     * KrauseningException extends RuntimeException
     * Krausening library's custom exception
 * ```KrauseningWarSpecificBootstrapContextListener.java```
-    * KrauseningWarSpecificBootstrapContextListener serves to initilize and destroy ServletContextListeners when OVERRIDE_EXTENSIONS_SUBFOLDER_PARM is defined
+    * KrauseningWarSpecificBootstrapContextListener serves to initilize and destroy ServletContextListeners when OVERRIDE_EXTENSIONS_SUBFOLDER_PARAM is defined
