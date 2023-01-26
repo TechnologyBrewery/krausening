@@ -18,7 +18,7 @@ For [Krausening Python](https://bitbucket.org/cpointe/krausening/src/dev/krausen
 * [Poetry 1.1+](https://python-poetry.org/)
 * [Pyenv](https://github.com/pyenv/pyenv)
 
-# Krausening in One Pint (Learn Krausening in 2 Minutes)#
+# Krausening in One Pint (Learn Krausening in 2 Minutes)
 Krausening is very simple.  Follow these steps to prime your project:
 
 1. Add a Java System Property called KRAUSENING_BASE pointing to the folder with your .properties files
@@ -33,7 +33,7 @@ Properties properties = krausening.getProperties("example.properties");
 ```
 3. You're done - order your next pint!
 
-# Krausening in Two Pints (Leveraging Property Extension)#
+# Krausening in Two Pints (Leveraging Property Extension)
 Often, some properties need to change as your deployment unit travels between environments.  We want to do this without having to copy and paste all the properties, lowering our maintenance burden to just those properties that have changed.  To accomplish this, build on the prior example by:
 
 1. Add a Java System Property called KRAUSENING_EXTENSIONS pointing to the folder with your extension .properties files
@@ -117,7 +117,7 @@ Properties properties = krausening.getProperties("example.properties");
 assertEquals(properties.get("my.property"), "X");
 ```
 
-# Krausening in Four Pints (Leveraging Jasypt for Encrypting/Decrypting Properties)#
+# Krausening in Four Pints (Leveraging Jasypt for Encrypting/Decrypting Properties)
 Frequently, it is useful to store encrypted information within properties files.  Krausening optionally leverages Jasypt to allow stored properties to be encrypted at rest while also decrypting property values as they are read without manual interaction.
 
 1.  Add a Java System Property called KRAUSENING_PASSWORD pointing to your Jasypt master encryption password.
