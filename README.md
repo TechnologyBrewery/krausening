@@ -18,7 +18,7 @@ For [Krausening Python](https://bitbucket.org/cpointe/krausening/src/dev/krausen
 * [Poetry 1.1+](https://python-poetry.org/)
 * [Pyenv](https://github.com/pyenv/pyenv)
 
-# Krausening in One Pint (Learn Krausening in 2 Minutes)#
+# Krausening in One Pint (Learn Krausening in 2 Minutes)
 Krausening is very simple.  Follow these steps to prime your project:
 
 1. Add a Java System Property called KRAUSENING_BASE pointing to the folder with your .properties files
@@ -33,7 +33,7 @@ Properties properties = krausening.getProperties("example.properties");
 ```
 3. You're done - order your next pint!
 
-# Krausening in Two Pints (Leveraging Property Extension)#
+# Krausening in Two Pints (Leveraging Property Extension)
 Often, some properties need to change as your deployment unit travels between environments.  We want to do this without having to copy and paste all the properties, lowering our maintenance burden to just those properties that have changed.  To accomplish this, build on the prior example by:
 
 1. Add a Java System Property called KRAUSENING_EXTENSIONS pointing to the folder with your extension .properties files
@@ -117,7 +117,7 @@ Properties properties = krausening.getProperties("example.properties");
 assertEquals(properties.get("my.property"), "X");
 ```
 
-# Krausening in Four Pints (Leveraging Jasypt for Encrypting/Decrypting Properties)#
+# Krausening in Four Pints (Leveraging Jasypt for Encrypting/Decrypting Properties)
 Frequently, it is useful to store encrypted information within properties files.  Krausening optionally leverages Jasypt to allow stored properties to be encrypted at rest while also decrypting property values as they are read without manual interaction.
 
 1.  Add a Java System Property called KRAUSENING_PASSWORD pointing to your Jasypt master encryption password.
@@ -216,6 +216,9 @@ You're now 5 pints in and ready for how ever many more property files you need w
 
 See the [krausening-python README](https://bitbucket.org/cpointe/krausening/src/dev/krausening-python/) for more details.
 
+# Contributions
+See the CONTRIBUTING.md file in the Krausening root directory for release instructions and general architecture information.
+
 # Distribution Channel
 
 Want Krausening in your project? The following Maven dependency will add the Java implementation of Krausening to your Maven project from the Maven Central Repository:
@@ -228,48 +231,6 @@ Want Krausening in your project? The following Maven dependency will add the Jav
 </dependency>
 ```
 
-## Releasing to Maven Central Repository
-
-Krausening uses both the `maven-release-plugin` and the `nexus-staging-maven-plugin` to facilitate the release and deployment of new Krausening builds. In order to perform a release, you must:
-
-1. Obtain a [JIRA](https://issues.sonatype.org/secure/Dashboard.jspa) account with Sonatype OSSRH and access to the `org.bitbucket.askllc` project group
-
-2. Ensure that your Sonatype OSSRH JIRA account credentials are specified in your `settings.xml`:
-
-```xml
-<settings>
-  <servers>
-    <server>
-      <id>ossrh</id>
-      <username>ossrh-jira-id</username>
-      <password>{encrypted-ossrh-jira-pwd}</password>
-    </server>
-  </servers>
-</settings>
-```
-  
-3. Krausening Python requires a [PyPI account](https://pypi.org/account/register/) with access to the [krausening](https://pypi.org/project/krausening/) project and integrates into the `maven-release-plugin`'s `deploy` phase to appropriately publish the package to PyPI. PyPI account credentials should be specified in your `settings.xml` under the `<id>pypi</id>` `<server>` entry:
-
-```xml
-<settings>
-  <servers>
-    <server>
-      <id>pypi</id>
-      <username>pypi-username</username>
-      <password>{encrypted-pypi-password}</password>
-    </server>
-  </servers>
-</settings>
-```
-
-
-4. Install `gpg` and distribute your key pair - see [here](https://central.sonatype.org/publish/requirements/gpg/).  OS X users may need to execute:
-
-```shell
-export GPG_TTY=`tty`;
-```
-
-5. Execute `mvn release:clean release:prepare`, answer the prompts for the versions and tags, and perform `mvn release:perform`
 
 ## Licensing
 Krausening is available under the [MIT License](http://opensource.org/licenses/mit-license.php).

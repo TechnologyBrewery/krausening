@@ -9,5 +9,5 @@ def before_scenario(context, scenario):
     """
     os.environ["KRAUSENING_BASE"] = ""
     os.environ["KRAUSENING_EXTENSIONS"] = ""
-    os.environ["KRAUSENING_OVERRIDES"] = ""
+    os.environ["KRAUSENING_OVERRIDE_EXTENSIONS"] = ""
     os.environ["KRAUSENING_PASSWORD"] = ""
