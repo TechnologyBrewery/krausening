@@ -46,7 +46,9 @@ export GPG_TTY=`tty`;
 
 5. Execute `mvn release:clean release:prepare`, answer the prompts for the versions and tags, and perform `mvn release:perform`
 
-## Krausening Source Code (Java)
+## Krausening Architecture (Java)
+
+It is worth first noting that many of the classes and interfaces defined in the source code rely on the [org.aeonbits.owner package](http://owner.aeonbits.org/docs/usage/). Below is a summary of the Krausening source code's files.
 
 ```
 org

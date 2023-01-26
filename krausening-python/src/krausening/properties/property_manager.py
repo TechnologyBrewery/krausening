@@ -94,13 +94,15 @@ class PropertyManager:
             self._extension_observer.start()
 
         if (
-            os.environ.get("KRAUSENING_OVERRIDES", None) is not None
-            and os.environ.get("KRAUSENING_OVERRIDES") != ""
+            os.environ.get("KRAUSENING_OVERRIDE_EXTENSIONS", None) is not None
+            and os.environ.get("KRAUSENING_OVERRIDE_EXTENSIONS") != ""
         ):
             self._extension_observer = Observer()
             self._extension_observer.schedule(
-                FileUpdateEventHandler(os.environ.get("KRAUSENING_OVERRIDES")),
-                os.environ.get("KRAUSENING_OVERRIDES"),
+                FileUpdateEventHandler(
+                    os.environ.get("KRAUSENING_OVERRIDE_EXTENSIONS")
+                ),
+                os.environ.get("KRAUSENING_OVERRIDE_EXTENSIONS"),
                 recursive=True,
             )
             self._extension_observer.start()
@@ -111,7 +113,7 @@ class PropertyManager:
 
         base = os.environ.get("KRAUSENING_BASE", None)
         extension = os.environ.get("KRAUSENING_EXTENSIONS", None)
-        override = os.environ.get("KRAUSENING_OVERRIDES", None)
+        override = os.environ.get("KRAUSENING_OVERRIDE_EXTENSIONS", None)
         password = os.environ.get("KRAUSENING_PASSWORD", None)
         if password is not None:
             properties = EncryptableProperties(password)

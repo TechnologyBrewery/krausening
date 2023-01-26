@@ -22,7 +22,7 @@ def step_impl(context):
 
 @given('a context-specific override properties file with property "foo"')
 def step_impl(context):
-    os.environ["KRAUSENING_OVERRIDES"] = "tests/resources/config_override/"
+    os.environ["KRAUSENING_OVERRIDE_EXTENSIONS"] = "tests/resources/config_override/"
 
 
 @given('the properties file contains encrypted value for the "foo" property')

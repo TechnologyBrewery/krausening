@@ -13,6 +13,7 @@ Managing properties with Krausening's Python library utilizes a similar approach
 
 * `KRAUSENING_BASE`
 * `KRAUSENING_EXTENSIONS`
+* `KRAUSENING_OVERRIDE_EXTENSIONS`
 * `KRAUSENING_PASSWORD`
 
 In order to use the Krausening Python, developers may directly use `PropertyManager` or extend `PropertyManager` to provide a custom interface.  For example, developers may directly use the `PropertyManager` as such:
