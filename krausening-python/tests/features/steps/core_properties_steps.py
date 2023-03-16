@@ -3,6 +3,7 @@ import os
 from behave import *
 from krausening.properties import PropertyManager
 from nose.tools import assert_equal
+from test_config import TestConfig
 
 
 def bar_num_assert(foo_property_value, bar_num_str):
@@ -31,9 +32,14 @@ def step_impl(context):
     context.file = "test-encrypted.properties"
 
 
-@given('an environment variable "TEST_VAR" is set')
-def step_impl(context):
-    os.environ["TEST_VAR"] = "test value!"
+@given('an environment variable "{env_var}" is set')
+def step_impl(context, env_var):
+    os.environ[env_var] = "test value!"
+
+
+@given('an environment variable "{env_var}" is not set')
+def step_impl(context, env_var):
+    os.environ[env_var] = ""
 
 
 @given(
@@ -48,6 +54,22 @@ def step_impl(context):
 def step_impl(context):
     context.properties = PropertyManager.get_instance().get_properties(
         context.file, force_reload=True
+    )
+
+
+@when("the test config is loaded")
+def step_impl(context):
+    os.environ["KRAUSENING_BASE"] = "tests/resources/config/"
+    context.properties = TestConfig()
+
+
+@then('the test config retrieved value of "{key}" is "{value}"')
+def step_impl(context, key, value):
+    retrieved_value = getattr(context.properties, key)
+    assert_equal(
+        retrieved_value,
+        value,
+        f"Retrieved {key} property, which is {retrieved_value}, didn't match expected value",
     )
 
 
