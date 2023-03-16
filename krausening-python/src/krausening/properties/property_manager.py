@@ -200,7 +200,7 @@ class EncryptableProperties(Properties):
         self.__password = password
 
     def getProperty(self, key: str, defaultValue: Optional[T] = None):
-        value = super().getProperty(key)
+        value = super().getProperty(key, defaultValue)
         if value is not None:
             if value.startswith(self.__propertyPrefix) and value.endswith(
                 self.__propertySuffix

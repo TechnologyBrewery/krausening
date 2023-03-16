@@ -19,6 +19,16 @@ Feature: Property Management
       When the properties file is loaded
       Then the retrieved value of "foo" is "bar3"
 
+  Scenario: Default properties can be retrieved from unencrypted property manager
+    Given an environment variable "KRAUSENING_PASSWORD" is set
+    When the test config is loaded
+    Then the test config retrieved value of "baz" is "default"
+
+  Scenario: Default properties can be retrieved from encrypted property manager
+    Given an environment variable "KRAUSENING_PASSWORD" is not set
+    When the test config is loaded
+    Then the test config retrieved value of "baz" is "default"
+
   Scenario: Encrypted properties can be decrypted
     Given a base properties file with property "foo"
     And the properties file contains encrypted value for the "foo" property
