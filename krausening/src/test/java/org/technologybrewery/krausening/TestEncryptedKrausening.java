@@ -1,4 +1,4 @@
-package org.bitbucket.krausening;
+package org.technologybrewery.krausening;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

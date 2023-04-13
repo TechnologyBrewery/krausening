@@ -12,8 +12,8 @@ import java.util.concurrent.ThreadFactory;
 
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.aeonbits.owner.loaders.Loader;
-import org.bitbucket.krausening.Krausening;
-import org.bitbucket.krausening.KrauseningException;
+import org.technologybrewery.krausening.Krausening;
+import org.technologybrewery.krausening.KrauseningException;
 
 /**
  * {@link KrauseningConfigFactory} is largely modeled after {@link ConfigFactory} and provides a simple, straightforward

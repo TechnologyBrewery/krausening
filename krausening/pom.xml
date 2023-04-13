@@ -2,7 +2,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.bitbucket.askllc.krausening</groupId>
+        <groupId>org.technologybrewery.krausening</groupId>
         <artifactId>krausening-root</artifactId>
         <version>16-SNAPSHOT</version>
     </parent>

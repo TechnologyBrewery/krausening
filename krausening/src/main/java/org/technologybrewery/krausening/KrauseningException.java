@@ -1,4 +1,4 @@
-package org.bitbucket.krausening;
+package org.technologybrewery.krausening;
 
 public class KrauseningException extends RuntimeException {
 
