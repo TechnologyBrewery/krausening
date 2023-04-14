@@ -1,4 +1,4 @@
-package org.bitbucket.krausening;
+package org.technologybrewery.krausening;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

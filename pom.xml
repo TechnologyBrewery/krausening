@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bitbucket.askllc.krausening</groupId>
+    <groupId>org.technologybrewery.krausening</groupId>
     <artifactId>krausening-root</artifactId>
     <version>16-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -12,7 +12,7 @@
         packages, these packages can be easily reused as-is to deploy to heterogeneous environments, circumventing
         the need to hack apart or rebuild the package to support property file modification.
     </description>
-    <url>https://bitbucket.org/askllc/krausening</url>
+    <url>https://github.com/TechnologyBrewery/krausening</url>
 
     <licenses>
         <license>
@@ -38,9 +38,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:ssh://git@bitbucket.org/cpointe/krausening.git</connection>
-        <developerConnection>scm:git:ssh://git@bitbucket.org/cpointe/krausening.git</developerConnection>
-        <url>https://bitbucket.org/cpointe/krausening.git</url>
+        <connection>scm:git:ssh://git@github.com:TechnologyBrewery/krausening.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:TechnologyBrewery/krausening.git</developerConnection>
+        <url>https://github.com/TechnologyBrewery/krausening</url>
         <tag>HEAD</tag>
     </scm>
 

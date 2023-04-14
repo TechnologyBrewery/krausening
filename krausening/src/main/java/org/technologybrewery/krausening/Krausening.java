@@ -1,4 +1,4 @@
-package org.bitbucket.krausening;
+package org.technologybrewery.krausening;
 
 import java.io.File;
 import java.io.FileReader;

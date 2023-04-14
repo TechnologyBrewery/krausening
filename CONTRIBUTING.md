@@ -7,7 +7,7 @@ This document serves to provide necessary steps and information to contribute to
 
 Krausening uses both the `maven-release-plugin` and the `nexus-staging-maven-plugin` to facilitate the release and deployment of new Krausening builds. In order to perform a release, you must:
 
-1. Obtain a [JIRA](https://issues.sonatype.org/secure/Dashboard.jspa) account with Sonatype OSSRH and access to the `org.bitbucket.askllc` project group
+1. Obtain a [JIRA](https://issues.sonatype.org/secure/Dashboard.jspa) account with Sonatype OSSRH and access to the `org.technologybrewery.askllc` project group
 
 2. Ensure that your Sonatype OSSRH JIRA account credentials are specified in your `settings.xml`:
 
@@ -82,7 +82,7 @@ org
 * ```KrauseningFactory.java```
     * KrauseningFactory extends DefaultFactory in order to delegate to KrauseningAwarePropertiesManager for property mapper proxy generation.
 
-#### org.bitbucket.krausening
+#### org.technologybrewery.krausening
 * ```Krausening.java```
     * Krausening serves as the entry singleton, which reads the specified properties files (through Java System Properties)
     * The first base properties will be loaded, with anything in the extensions location being added on to the top. This allows value to be added or overridden, which is especially useful when you have a standard configuration defined in your base files, but need to specialize some values for different deployments.

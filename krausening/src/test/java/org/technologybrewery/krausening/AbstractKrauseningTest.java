@@ -1,4 +1,4 @@
-package org.bitbucket.krausening;
+package org.technologybrewery.krausening;
 
 public abstract class AbstractKrauseningTest {
 

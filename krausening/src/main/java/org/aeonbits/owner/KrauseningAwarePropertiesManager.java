@@ -14,8 +14,8 @@ import org.aeonbits.owner.KrauseningConfig.KrauseningMergePolicy;
 import org.aeonbits.owner.KrauseningConfig.KrauseningMergePolicy.KrauseningMergePolicyType;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.apache.commons.lang3.StringUtils;
-import org.bitbucket.krausening.Krausening;
-import org.bitbucket.krausening.KrauseningException;
+import org.technologybrewery.krausening.Krausening;
+import org.technologybrewery.krausening.KrauseningException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

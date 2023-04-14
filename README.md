@@ -1,6 +1,6 @@
 # Krausening - Externalized Property Management and Access for Java and Python #
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
-[![Maven Central](https://img.shields.io/maven-central/v/org.bitbucket.askllc.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.bitbucket.askllc.krausening%22%20AND%20a%3A%22krausening%22)
+[![Maven Central](https://img.shields.io/maven-central/v/org.technologybrewery.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.org.technologybrewery.krausening%22%20AND%20a%3A%22krausening%22)
 [![PyPI](https://img.shields.io/pypi/v/krausening)](https://pypi.org/project/krausening/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/krausening)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/krausening)
@@ -44,7 +44,7 @@ KRAUSENING_EXTENSIONS=./src/test/resources/prod-env
 
 ```properties
 # in $KRAUSENING_BASE/example.properties:
-propertyA=org.bitbucket.some.reflect.Class
+propertyA=org.org.technologybrewery.some.reflect.Class
 propertyB=https://localhost/
 
 # in $KRAUSENING_EXTENSIONS/example.properties:
@@ -54,7 +54,7 @@ propertyB=https://prodUrl/
 ```java
 Krausening krausening = Krausening.getInstance();
 Properties properties = krausening.getProperties("example.properties");
-assertEquals(properties.get("propertyA"), "org.bitbucket.some.reflect.Class");
+assertEquals(properties.get("propertyA"), "org.technologybrewery.some.reflect.Class");
 assertEquals(properties.get("propertyB"), "https://prodUrl/");
 ```
 4. You're done - try a mystery beer with Krausening's encryption integration to further quench your thirst.
@@ -84,7 +84,7 @@ my.property=Y
 `web.xml` for foo
 ```xml
     <listener>
-        <listener-class>org.bitbucket.krausening.KrauseningWarSpecificBootstrapContextListener</listener-class>
+        <listener-class>org.technologybrewery.krausening.KrauseningWarSpecificBootstrapContextListener</listener-class>
     </listener>
     <context-param>
         <param-name>override.extensions.subfolder</param-name>
@@ -95,7 +95,7 @@ my.property=Y
 `web.xml` for bar (**NOTE the difference in the subfolder parameter**)
 ```xml
     <listener>
-        <listener-class>org.bitbucket.krausening.KrauseningWarSpecificBootstrapContextListener</listener-class>
+        <listener-class>org.technologybrewery.krausening.KrauseningWarSpecificBootstrapContextListener</listener-class>
     </listener>
     <context-param>
         <param-name>override.extensions.subfolder</param-name>
@@ -225,9 +225,9 @@ Want Krausening in your project? The following Maven dependency will add the Jav
 
 ```xml
 <dependency>
-    <groupId>org.bitbucket.askllc.krausening</groupId>
+    <groupId>org.technologybrewery.krausening</groupId>
     <artifactId>krausening</artifactId>
-    <version>11</version>
+    <version>16</version>
 </dependency>
 ```
 
