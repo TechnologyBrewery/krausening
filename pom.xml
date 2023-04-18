@@ -44,8 +44,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com:TechnologyBrewery/krausening.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:TechnologyBrewery/krausening.git</developerConnection>
+        <connection>scm:git:ssh://git@github.com/TechnologyBrewery/krausening.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/TechnologyBrewery/krausening.git</developerConnection>
         <url>https://github.com/TechnologyBrewery/krausening</url>
         <tag>HEAD</tag>
     </scm>
@@ -90,7 +90,7 @@
                      deploy:deploy goal - Habushu's habushu:publish-to-pypi-repo goal remains as-is -->
                 <configuration>
                     <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <!-- Automatically release staging repository and make deployed artifacts available on
                          Maven Central. This mitigates the need to manually log into the OSSRH Nexus instance
                          and release the staging repository -->
