@@ -93,7 +93,7 @@ public final class KrauseningConfigFactory {
 	 * 
 	 * @param key
 	 *            the key for the property
-	 * @return the value for the property, or <tt>null</tt> if the property is not set.
+	 * @return the value for the property, or null if the property is not set.
 	 */
 	public static String getProperty(String key) {
 		return INSTANCE.getProperty(key);
@@ -104,7 +104,7 @@ public final class KrauseningConfigFactory {
 	 * 
 	 * @param key
 	 *            the key for the property to remove.
-	 * @return the old value for the given key, or <tt>null</tt> if the property was not set.
+	 * @return the old value for the given key, or null if the property was not set.
 	 */
 	public static String clearProperty(String key) {
 		return INSTANCE.clearProperty(key);
@@ -117,7 +117,7 @@ public final class KrauseningConfigFactory {
 	 * @param loader
 	 *            the loader to register.
 	 * @throws NullPointerException
-	 *             if specified loader is <tt>null</tt>.
+	 *             if specified loader is null.
 	 */
 	public static void registerLoader(Loader loader) {
 		INSTANCE.registerLoader(loader);
