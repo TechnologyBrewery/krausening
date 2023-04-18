@@ -1,6 +1,6 @@
 # Krausening - Externalized Property Management and Access for Java and Python #
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
-[![Maven Central](https://img.shields.io/maven-central/v/org.technologybrewery.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.org.technologybrewery.krausening%22%20AND%20a%3A%22krausening%22)
+[![Maven Central](https://img.shields.io/maven-central/v/org.technologybrewery.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.technologybrewery.krausening%22%20AND%20a%3A%22krausening%22)
 [![PyPI](https://img.shields.io/pypi/v/krausening)](https://pypi.org/project/krausening/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/krausening)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/krausening)

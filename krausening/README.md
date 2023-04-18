@@ -1,6 +1,6 @@
 # Krausening - Externalized Property Management and Access for Java
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
-[![Maven Central](https://img.shields.io/maven-central/v/org.technologybrewery.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.org.technologybrewery.krausening%22%20AND%20a%3A%22krausening%22)
+[![Maven Central](https://img.shields.io/maven-central/v/org.technologybrewery.krausening/krausening.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.technologybrewery.krausening%22%20AND%20a%3A%22krausening%22)
 
 # Distribution Channel
 Want Krausening in your project? The following Maven dependency will add the Java implementation of Krausening to your Maven project from the Maven Central Repository:
@@ -39,7 +39,7 @@ KRAUSENING_EXTENSIONS=./src/test/resources/prod-env
 
 ```properties
 # in $KRAUSENING_BASE/example.properties:
-propertyA=org.org.technologybrewery.some.reflect.Class
+propertyA=org.technologybrewery.some.reflect.Class
 propertyB=https://localhost/
 
 # in $KRAUSENING_EXTENSIONS/example.properties:
