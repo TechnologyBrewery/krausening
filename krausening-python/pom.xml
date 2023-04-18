@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.technologybrewery.krausening</groupId>
         <artifactId>krausening-root</artifactId>
-        <version>16</version>
+        <version>17-SNAPSHOT</version>
     </parent>
 
     <name>Krausening::Krausening Python</name>

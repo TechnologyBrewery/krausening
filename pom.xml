@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.technologybrewery.krausening</groupId>
     <artifactId>krausening-root</artifactId>
-    <version>16</version>
+    <version>17-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Krausening</name>
