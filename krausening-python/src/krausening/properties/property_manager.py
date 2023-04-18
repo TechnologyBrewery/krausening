@@ -189,7 +189,7 @@ class EncryptableProperties(Properties):
 
     Reference: https://resultfor.dev/359470-implement-pbewithhmacsha512andaes-256-of-java-jasypt-in-python.
 
-    See https://bitbucket.org/cpointe/krausening/src/dev/ for details on encrypting values with Jasypt.
+    See https:https://github.com/TechnologyBrewery/krausening/tree/dev/krausening for details on encrypting values with Jasypt.
     """
 
     def __init__(self, password: str) -> None:

@@ -1,11 +1,17 @@
 # Krausening Python - Externalized Property Management and Access for Python Projects #
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
 [![PyPI](https://img.shields.io/pypi/v/krausening)](https://pypi.org/project/krausening/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/krausening)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/krausening)
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
 
+Krausening property management and encryption for Python is packaged using the open-source Python Maven plugin [Habushu](https://bitbucket.org/cpointe/habushu) and made available as a [PyPI package](https://pypi.org/project/krausening/).  
 
- Krausening property management and encryption for Python is packaged using the open-source Python Maven plugin [Habushu](https://bitbucket.org/cpointe/habushu) and made available as a [PyPI package](https://pypi.org/project/krausening/).  
+## Distribution Channel
+
+Krausening Python is published to PyPI under the [krausening](https://pypi.org/project/krausening/) project and may be installed using any package installer/manager that leverages PyPI.  For example:
+
+* [Poetry](https://python-poetry.org/) - `poetry add krausening`
+* [pip](https://pip.pypa.io/) - `pip install krausening`
 
 ## Managing Properties with Krausening and Python
 
@@ -54,16 +60,6 @@ class TestConfig():
     def reload(self):
         self.properties = PropertyManager.get_instance().get_properties('test.properties')
 ```
-
-**Note: Due to updates the M1 Apple Chip, we strongly recommend using Python >= 3.9 for compatibility reasons.**
-
-## Distribution Channel
-
-Krausening Python is published to PyPI under the [krausening](https://pypi.org/project/krausening/) project and may be installed using any package installer/manager that leverages PyPI.  For example:
-
-  * [Poetry](https://python-poetry.org/) - `poetry add krausening`
-  * [pip](https://pip.pypa.io/) - `pip install krausening`
-
 ## Releasing to PyPI
 
 Releasing Krausening Python integrates into the project's larger utilization of the `maven-release-plugin`, specifically publishing the package to PyPI during the `deploy` phase.  A [PyPI account](https://pypi.org/account/register/) with access to the [krausening](https://pypi.org/project/krausening/) project is required. PyPI account credentials should be specified in your `settings.xml` under the `<id>pypi</id>` `<server>` entry:

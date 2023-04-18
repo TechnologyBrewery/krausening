@@ -2,10 +2,10 @@
 name = "krausening"
 version = "16.dev"
 description = "Python implementation of Krausening"
-authors = ["Eric Konieczny <ekonieczny@cpointe-inc.com>"]
+authors = ["Eric Konieczny <ekoniec1@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://bitbucket.org/cpointe/krausening"
+repository = "https://github.com/TechnologyBrewery/krausening"
 
 keywords = ["properties", "configuration-management"]
 
