@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>org.technologybrewery</groupId>
         <artifactId>parent</artifactId>
-        <version>5</version>
+        <version>2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -62,8 +61,11 @@
                 <plugin>
                     <groupId>org.technologybrewery.habushu</groupId>
                     <artifactId>habushu-maven-plugin</artifactId>
-                    <version>2.6.0</version>
+                    <version>2.3.0</version>
                     <extensions>true</extensions>
+                    <configuration>
+                        <pythonVersion>${version.python.default}</pythonVersion>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -79,11 +81,8 @@
                         updates to pom.xml files.  In order to version control both pom.xml and pyproject.toml files
                         that are updated during release preparation, customize the preparation and completion goals
                         to additionally execute the scm:checkin goals -->
-                    <preparationGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] prepare release"
-                    </preparationGoals>
-                    <completionGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] prepare for next
-                        development iteration"
-                    </completionGoals>
+                    <preparationGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] prepare release"</preparationGoals>
+                    <completionGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] prepare for next development iteration"</completionGoals>
                     <goals>deploy</goals>
                 </configuration>
             </plugin>
@@ -91,48 +90,6 @@
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <!-- When performing a release, the nexus-staging-maven-plugin only intercepts and modifies the
-                     deploy:deploy goal - Habushu's habushu:publish-to-pypi-repo goal remains as-is -->
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <!-- Automatically release staging repository and make deployed artifacts available on
-                         Maven Central. This mitigates the need to manually log into the OSSRH Nexus instance
-                         and release the staging repository -->
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <version>1.7.1</version>
-                <configuration>
-                    <unpack>false</unpack>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>krausening</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>https://repo1.maven.org/maven2/org/technologybrewery/krausening/krausening/maven-metadata.xml</url>
-                            <outputDirectory>${project.build.directory}/krausening.xml</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>foo</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>https://repo1.maven.org/maven2/org/technologybrewery/maven-metadata.xml</url>
-                            <outputDirectory>${project.build.directory}/foo.xml</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

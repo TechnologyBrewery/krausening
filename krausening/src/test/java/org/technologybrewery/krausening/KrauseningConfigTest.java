@@ -4,10 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +15,9 @@ import org.aeonbits.owner.Config.Sources;
 import org.aeonbits.owner.KrauseningConfig;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 import org.aeonbits.owner.KrauseningConfigFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,9 +36,15 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
 
     @Before
     public void reloadKrausening() throws Exception {
+        FileUtils.deleteDirectory(new File(BASE_PROPERTIES_LOCATION_IN_OUTPUT_DIR));
+        FileUtils.deleteDirectory(new File(EXTENSIONS_PROPERTIES_LOCATION_IN_OUTPUT_DIR));
+
+        FileUtils.copyDirectory(new File(BASE_PROPERTIES_LOCATION), new File(BASE_PROPERTIES_LOCATION_IN_OUTPUT_DIR));
+        FileUtils.copyDirectory(new File(EXTENSIONS_PROPERTIES_LOCATION), new File(EXTENSIONS_PROPERTIES_LOCATION_IN_OUTPUT_DIR));
+
         System.setProperty(Krausening.BASE_LOCATION, BASE_PROPERTIES_LOCATION);
         System.setProperty(Krausening.EXTENSIONS_LOCATION, EXTENSIONS_PROPERTIES_LOCATION);
-        System.setProperty(Krausening.OVERRIDE_EXTENSIONS_LOCATION, OVERRIDDEN_EXTENSIONS_LOCATION);
+        System.setProperty(Krausening.OVERRIDE_EXTENSIONS_LOCATION, NO_LOCATION);
         Krausening krausening = Krausening.getInstance();
         krausening.loadProperties();
     }
@@ -84,6 +89,8 @@ public class KrauseningConfigTest extends AbstractKrauseningTest {
     public void testGettingOverriddenExtensions() throws Exception {
 
         // Set up the overridden extensions the way the context listener does
+        System.setProperty(Krausening.OVERRIDE_EXTENSIONS_LOCATION, OVERRIDDEN_EXTENSIONS_LOCATION);
+
         Krausening krausening = Krausening.getInstance();
         krausening.setOverrideExtensionsSubfolder(WAR_1_PROPERTIES_SUBFOLDER);
         krausening.loadProperties();

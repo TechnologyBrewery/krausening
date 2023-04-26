@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * with the {@link KrauseningSources} annotation on the same interface in order to load *.properties with Krausening and
  * *.xml properties using OWNER.
  */
-class KrauseningAwarePropertiesManager extends PropertiesManager {
+class KrauseningAwarePropertiesManager extends OwnerPropertiesManager {
 
 	private static final long serialVersionUID = 8372096321097307057L;
 	
@@ -82,7 +82,7 @@ class KrauseningAwarePropertiesManager extends PropertiesManager {
 	 *         annotations.
 	 */
 	@Override
-	Properties doLoad() {
+	protected Properties doLoad() {
 		List<Properties> propertiesToMerge = new ArrayList<>(this.krauseningPropertyFileNames.size());
 		Krausening krausening = Krausening.getInstance();
 		for (String krauseningPropertyFileName : this.krauseningPropertyFileNames) {

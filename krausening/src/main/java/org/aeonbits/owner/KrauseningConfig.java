@@ -13,6 +13,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.technologybrewery.krausening.KrauseningException;
 
 /**
  * {@link KrauseningConfig} serves as the interface to extend in order to define
@@ -50,7 +51,7 @@ public interface KrauseningConfig extends Config, Accessible {
             FAIL_ON_DUPLICATE_PROPERTY_KEY {
                 @Override
                 Properties mergeProperties(List<Properties> propertiesList) {
-                    Set<String> duplicatePropertyKeys = new HashSet<String>();
+                    Set<String> duplicatePropertyKeys = new HashSet<>();
                     Properties mergedProperties = new Properties();
                     for (Properties properties : propertiesList) {
                         for (Object propertyKey : properties.keySet()) {
@@ -62,7 +63,7 @@ public interface KrauseningConfig extends Config, Accessible {
                         }
                     }
                     if (!duplicatePropertyKeys.isEmpty()) {
-                        throw new RuntimeException("The following duplicate property key(s) were found: "
+                        throw new KrauseningException("The following duplicate property key(s) were found: "
                                 + StringUtils.join(duplicatePropertyKeys, ", "));
                     }
                     return mergedProperties;
