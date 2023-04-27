@@ -56,7 +56,7 @@ def step_impl(context):
     with open(context.abs_file_path, "w") as prop_file:
         prop_file.write(f"bar: Now {context.initial_bar_value} WITH CHANGES!\n")
     # Sleep to give the filewatcher a chance to process the update
-    sleep(1)
+    sleep(2)
 
 
 @then('the value of "bar" will automatically be updated in memory')
