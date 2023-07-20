@@ -1,4 +1,5 @@
 import os
+import copy
 from javaproperties import Properties as JavaProperties
 from krausening.logging import LogManager
 from krausening.properties import PropertyEncryptor
@@ -107,7 +108,8 @@ class PropertyManager:
             )
             self._extension_observer.start()
 
-    def get_properties(self, file_name: str, force_reload=False):
+    def get_properties(self, file_name: str, force_reload=False,
+                       add_metadata=False):
         if file_name in self._property_cache and not force_reload:
             return self._property_cache[file_name]
 
@@ -115,10 +117,14 @@ class PropertyManager:
         extension = os.environ.get("KRAUSENING_EXTENSIONS", None)
         override = os.environ.get("KRAUSENING_OVERRIDE_EXTENSIONS", None)
         password = os.environ.get("KRAUSENING_PASSWORD", None)
+
+        # `Properties` object if metadata flag is activated
         if password is not None:
             properties = EncryptableProperties(password)
+            properties_metadata = EncryptableProperties(password)
         else:
             properties = Properties()
+            properties_metadata = Properties()
 
         if file_name not in self._property_cache:
             self._property_cache[file_name] = properties
@@ -128,6 +134,20 @@ class PropertyManager:
                 if not base.endswith("/"):
                     base = base + "/"
                 properties.load(open("{0}{1}".format(base, file_name)))
+                
+                # copy the dictionary and clear
+                base_properties = copy.deepcopy(properties)
+                properties.clear()
+
+                # update the dictionary
+                properties.update(base_properties)
+
+                # given k-v pairs, prepend <prefix><delim> to k:v
+                for k, v in base_properties.items():
+                    if not k.startswith(Properties.DELIM):
+                        k = Properties.PREFIX_BASE + Properties.DELIM + k
+                        properties_metadata[k] = v
+
             except FileNotFoundError:
                 self._logger.warn(
                     "No base file found for {0}{1}".format(base, file_name)
@@ -138,6 +158,20 @@ class PropertyManager:
                 if not extension.endswith("/"):
                     extension = extension + "/"
                 properties.load(open("{0}{1}".format(extension, file_name)))
+                
+                # copy the dictionary and clear
+                ext_properties = copy.deepcopy(properties)
+                properties.clear()
+
+                # update the dictionary
+                properties.update(ext_properties)
+
+                # given k-v pairs, prepend <prefix><delim> to k:v
+                for k, v in ext_properties.items():
+                    if not k.startswith(Properties.DELIM):
+                        k = Properties.PREFIX_EXT + Properties.DELIM + k
+                        properties_metadata[k] = v
+
             except FileNotFoundError:
                 self._logger.warn(
                     "No extension file found for {0}{1}".format(base, file_name)
@@ -148,12 +182,30 @@ class PropertyManager:
                 if not override.endswith("/"):
                     override = override + "/"
                 properties.load(open("{0}{1}".format(override, file_name)))
+
+                # copy the dictionary and clear
+                override_properties = copy.deepcopy(properties)
+                properties.clear()
+
+                # update the dictionary
+                properties.update(override_properties)
+
+                # given k-v pairs, prepend <prefix><delim> to k:v
+                for k, v in override_properties.items():
+                    if not k.startswith(Properties.DELIM):
+                        k = Properties.PREFIX_OVERRIDE + Properties.DELIM + k
+                        properties_metadata[k] = v
+
             except FileNotFoundError:
                 self._logger.warn(
                     "No extension file found for {0}{1}".format(base, file_name)
                 )
-
-        self._property_cache[file_name].update(properties)
+        
+        # set the cache given the desired `Properties` object
+        if add_metadata:
+            self._property_cache[file_name] = properties_metadata
+        else:
+            self._property_cache[file_name] = properties
 
         return self._property_cache[file_name]
 
@@ -166,11 +218,75 @@ class Properties(JavaProperties):
     This class represents a properties file without encryption
     """
 
+    # delimiter to demarcate {base,extension} and key
+    DELIM = ">>>"
+
+    # constants to indicate which class the property is
+    PREFIX_BASE = "base"
+    PREFIX_EXT = "ext"
+    PREFIX_OVERRIDE = "override"
+
+
     def __init__(self) -> None:
         super().__init__()
+        self._logger = LogManager.get_instance().get_logger("Properties")
 
     def __getitem__(self, key: str) -> str:
         return self.getProperty(key)
+    
+    def to_environ(self, mode=None):
+        """ Writes the key-value pairs to os.environ, given filters such as
+        writing only base-properties, writing only extension-properties, etc.
+        The keyword `mode` is used here:
+        `mode` == both => saves both base and extension properties
+        `mode` == extension => saves only extension properties
+        `mode` == base => saves only base properties
+        `mode` == None => saves properties lacking metadata (default)
+
+        Args:
+            mode (str): the method or mode to save environment variables.
+
+        Returns:
+            Properties object.
+        """
+
+        # add to a dictionary; for easy testing and debugging
+        dic = {}
+        for k, v in self.items():
+
+            # if both base and extension properties are to be added
+            if mode == 'both':
+                if Properties.DELIM in k:
+                    dic[k] = v
+
+            # save only those properties in the base properties file
+            elif mode == 'base':
+                if k.startswith(Properties.PREFIX_BASE + Properties.DELIM):
+                    dic[k] = v
+
+            # save only those properties in the extensions properties file
+            elif mode == 'extension':
+                if k.startswith(Properties.PREFIX_EXT + Properties.DELIM):
+                    dic[k] = v
+            
+            # save those properties lacking metadata (default argument)
+            else:
+                if mode == None:
+                    if Properties.DELIM not in k:
+                        dic[k] = v
+                else:
+                    raise IOError('mode is {base, both, extension, None}')
+
+        # iterate over `dic` and save to os.environ
+        self._logger.debug("Starting persistance to os.environ")
+        for k, v in dic.items():
+            if k in os.environ:
+                raise KeyError(f"`{k}` exists in os.environ; rename this key.")
+            self._logger.info(f"Adding {k}: {v} to os.environ")
+            os.environ[k] = v
+
+        self._logger.info("{0} entries persisted.".format(len(dic)))
+        return self
 
     def getProperty(self, key: str, defaultValue: Optional[T] = None):
         try:
