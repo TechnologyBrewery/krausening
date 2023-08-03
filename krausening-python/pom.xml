@@ -16,7 +16,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.bitbucket.cpointe.habushu</groupId>
+                <groupId>org.technologybrewery.habushu</groupId>
                 <artifactId>habushu-maven-plugin</artifactId>
             </plugin>
             <!-- Activated via the ossrh-release profile in the root POM, override the
