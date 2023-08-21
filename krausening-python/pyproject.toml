@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "krausening"
-version = "20.dev"
+version = "17.dev"
 description = "Python implementation of Krausening"
 authors = ["Eric Konieczny <ekoniec1@gmail.com>"]
 license = "MIT"
@@ -12,7 +12,7 @@ keywords = ["properties", "configuration-management"]
 [tool.poetry.dependencies]
 python = "^3.9"
 javaproperties = "^0.8.1"
-cryptography = ">=42.0.0"
+cryptography = "^41.0.3"
 watchdog = "^2.1.9"
 
 [tool.poetry.dev-dependencies]
@@ -21,5 +21,5 @@ black = "^22.6.0"
 nose = "^1.3.7"
 
 [build-system]
-requires = ["poetry-core>=1.6.0"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
