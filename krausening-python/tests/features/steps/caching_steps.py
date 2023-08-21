@@ -8,7 +8,7 @@ from time import sleep
 
 @given('a properties file with property "foo" is loaded')
 def step_impl(context):
-    os.environ["KRAUSENING_BASE"] = "tests/resources/config/"
+    os.environ["KRAUSENING_BASE"] = "./tests/resources/config/"
     context.file = "test.properties"
     context.properties = PropertyManager.get_instance().get_properties(
         context.file, force_reload=True
@@ -34,7 +34,7 @@ def step_impl(context):
 
 @given('a properties file containing property "bar" exists')
 def step_impl(context):
-    os.environ["KRAUSENING_BASE"] = "tests/resources/config/"
+    os.environ["KRAUSENING_BASE"] = "./tests/resources/config/"
     context.file_name = "hot_reload.properties"
     context.initial_bar_value = "some_value"
     context.abs_file_path = os.path.join(
