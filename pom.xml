@@ -88,16 +88,6 @@
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <!-- When performing a release, the nexus-staging-maven-plugin only intercepts and modifies the
-                     deploy:deploy goal - Habushu's habushu:publish-to-pypi-repo goal remains as-is -->
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <!-- Automatically release staging repository and make deployed artifacts available on
-                         Maven Central. This mitigates the need to manually log into the OSSRH Nexus instance
-                         and release the staging repository -->
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
         </plugins>
     </build>
