@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>org.technologybrewery</groupId>
@@ -78,8 +79,8 @@
                         updates to pom.xml files.  In order to version control both pom.xml and pyproject.toml files
                         that are updated during release preparation, customize the preparation and completion goals
                         to additionally execute the scm:checkin goals -->
-                    <preparationGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] prepare release"</preparationGoals>
-                    <completionGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] prepare for next development iteration"</completionGoals>
+                    <preparationGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] :bookmark: prepare release"</preparationGoals>
+                    <completionGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] :bookmark: prepare for next development iteration"</completionGoals>
                     <goals>deploy</goals>
                 </configuration>
             </plugin>
