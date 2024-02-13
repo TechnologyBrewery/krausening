@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "krausening"
-version = "19.dev"
+version = "19"
 description = "Python implementation of Krausening"
 authors = ["Eric Konieczny <ekoniec1@gmail.com>"]
 license = "MIT"
