@@ -54,3 +54,4 @@ Thumbs.db
 
 # Local Poetry configuration
 poetry.toml
+poetry.lock
