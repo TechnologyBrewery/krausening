@@ -14,12 +14,12 @@ archive.
 # Requirements
 In order to use Krausening, the following prerequisites must be installed:
 
-* Maven 3.6+
+* Maven 3.8+
 * Java 11+
 
 For [Krausening Python](https://github.com/TechnologyBrewery/krausening/tree/dev/krausening-python/), the following must also be installed:
 
-* [Poetry 1.2+](https://python-poetry.org/)
+* [Poetry 1.6+](https://python-poetry.org/)
 * [Pyenv](https://github.com/pyenv/pyenv)
 
 # Krausening and Java
