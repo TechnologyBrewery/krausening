@@ -18,6 +18,9 @@
             <plugin>
                 <groupId>org.technologybrewery.habushu</groupId>
                 <artifactId>habushu-maven-plugin</artifactId>
+                <configuration>
+                    <pythonVersion>${version.python.default}</pythonVersion>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Properties;
+import java.util.Set;
 
 import org.aeonbits.owner.KrauseningConfig;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
@@ -28,6 +29,13 @@ public class TestEncryptedKrausening extends TestKrausening {
 		krausening.loadProperties();
 		Properties properties = krausening.getProperties(ENCRYPTED_PROPERTIES);
 		assertNotNull(properties);
+		Set<Object> keys = properties.keySet();
+		for (Object key : keys) {
+			String keyAsString = key.toString();
+			if (PASSWORD_KEY.equals(keyAsString)) {
+				assertEquals(DECRYPTED_PASSWORD_VALUE, properties.getProperty(keyAsString));
+			}
+		}
 		assertEquals(DECRYPTED_PASSWORD_VALUE, properties.getProperty(PASSWORD_KEY));
 	}
 
