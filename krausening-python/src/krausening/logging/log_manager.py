@@ -5,6 +5,16 @@ class LogManager:
     """
     Class for handling logging.
     """
+    DEFAULT_LOG_LEVEL = 'INFO'
+
+    LOG_LEVELS = {
+    'CRITICAL': logging.CRITICAL,
+    'ERROR': logging.ERROR,
+    'WARNING': logging.WARNING,
+    'INFO': logging.INFO,
+    'DEBUG': logging.DEBUG,
+    'NOTSET': logging.NOTSET,
+}
 
     __instance = None
 
@@ -26,9 +36,14 @@ class LogManager:
         else:
             LogManager.__instance = self
 
-    def get_logger(self, name: str) -> logging.Logger:
+    def _get_log_level(self, log_level: str) -> int:
+        return self.LOG_LEVELS.get(log_level, self.LOG_LEVELS[self.DEFAULT_LOG_LEVEL])
+
+    def get_logger(self, name: str, log_level: str = DEFAULT_LOG_LEVEL) -> logging.Logger:
         logger = logging.getLogger(name)
         logger.addHandler(LogManager.__handler)
-        logger.setLevel(logging.INFO)
+
+        log_level = self._get_log_level(log_level)
+        logger.setLevel(log_level)
 
         return logger

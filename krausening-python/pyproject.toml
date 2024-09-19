@@ -10,8 +10,8 @@ repository = "https://github.com/TechnologyBrewery/krausening"
 keywords = ["properties", "configuration-management"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-javaproperties = ">=0.8.1"
+python = ">=3.8"
+javaproperties = [{version = ">=0.8.1", python = ">=3.8,<4.0"}]
 cryptography = ">=42.0.0"
 watchdog = ">=2.1.9"
 
