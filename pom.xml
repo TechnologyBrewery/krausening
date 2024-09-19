@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.technologybrewery.krausening</groupId>
     <artifactId>krausening-root</artifactId>
-    <version>20-SNAPSHOT</version>
+    <version>20</version>
     <packaging>pom</packaging>
 
     <name>Krausening</name>
@@ -47,7 +47,8 @@
         <connection>scm:git:ssh://git@github.com/TechnologyBrewery/krausening.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/TechnologyBrewery/krausening.git</developerConnection>
         <url>https://github.com/TechnologyBrewery/krausening</url>
-    </scm>
+      <tag>krausening-root-20</tag>
+  </scm>
 
     <modules>
         <module>krausening</module>
