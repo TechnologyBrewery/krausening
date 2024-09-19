@@ -1,5 +1,13 @@
 package org.technologybrewery.krausening;
 
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.lang3.StringUtils;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.RandomIvGenerator;
+import org.jasypt.properties.EncryptableProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
@@ -11,14 +19,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.apache.commons.lang3.StringUtils;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.iv.RandomIvGenerator;
-import org.jasypt.properties.EncryptableProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * In brewing, krausening (KROI-zen-ing) refers to adding a small amount of
  * fresh wort to prime finished beer for carbonation. In Java, Krausening is a
@@ -26,12 +26,12 @@ import org.slf4j.LoggerFactory;
  * Properties files to be externalized from deployment units, enabling the same
  * deployment unit to be leveraged repeatedly without the need to rebuild or
  * hacking the archive.
- * 
+ *
  * To use, you need to minimally set a system property "KRAUSENING_BASE", which
  * points to a directory where your {@link Properties} files will be located.
  * Krausening will load those up and make them available via the
  * {@code getProperties(<file name>)} method.
- * 
+ *
  * You can then use a system property called "KRAUSENING_EXTENSIONS" to set up
  * extensions to the {@link Properties} files located in "KRAUSENING_BASE". The
  * first the base properties will be loaded, with anything in the extensions
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * overridden, which is especially useful when you have a standard configuration
  * defined in your base files, but need to specialize some values for different
  * deployments.
- * 
+ *
  * Only .properties files will be loaded. Any other file encountered will be
  * skipped.
  */
@@ -84,9 +84,9 @@ public final class Krausening {
 
     /** Whether or not KRAUSENING_PASSWORD is non-blank. */
     private boolean hasMasterPassword;
-    
+
     private static Map<String, Krausening> instanceMap = new HashMap<>();
-    
+
     private static String defaultInstanceKey = UUID.randomUUID().toString();
 
     /**
@@ -97,7 +97,7 @@ public final class Krausening {
 
     /**
      * Returns the singleton instance of this class.
-     * 
+     *
      * @return singleton reference to Krausening
      */
     public static Krausening getInstance() {
@@ -109,14 +109,14 @@ public final class Krausening {
 		}
 		return instance;
     }
-    
+
     protected void updateDefaultInstance() {
 		instanceMap.put(defaultInstanceKey, this);
     }
-    
+
     /**
      * Returns an instance of the class based on the overrideExtensionsSubfolder requested.
-     * 
+     *
      * @param overrideExtensionsSubfolder
      * @return
      */
@@ -186,7 +186,7 @@ public final class Krausening {
     /**
      * Log an error for the file and location type when the location does not
      * exist.
-     * 
+     *
      * @param file
      *            The file that does not exist
      * @param location
@@ -228,7 +228,7 @@ public final class Krausening {
 
     /**
      * Loads all .properties files from the passed location.
-     * 
+     *
      * @param location
      *            the location containing properties files
      * @param locationType
@@ -267,7 +267,7 @@ public final class Krausening {
     /**
      * Creates an empty Properties file, either standard or encrypted, based on
      * whether or not the master password is set.
-     * 
+     *
      * @return An empty properties instance
      */
     private Properties createEmptyProperties() {
@@ -291,7 +291,7 @@ public final class Krausening {
 
     /**
      * Returns the properties file loaded by Krausening for given file name.
-     * 
+     *
      * @param propertiesFileName
      *            The file name to retrieve
      * @return The file or null if that file name is not know
@@ -306,7 +306,7 @@ public final class Krausening {
      * for the entire system. It acts a second level extension effectively. A
      * property is first set in base, the extensions, then finally in a
      * subfolder within the override extension location.
-     * 
+     *
      * @param overrideExtensionSubfolder
      */
     protected void setOverrideExtensionsSubfolder(String overrideExtensionSubfolder) {
@@ -315,7 +315,7 @@ public final class Krausening {
         // extensions directory
         this.overrideExtensionSubfolder = overrideExtensionSubfolder;
     }
-    
-    
-    
+
+
+
 }
