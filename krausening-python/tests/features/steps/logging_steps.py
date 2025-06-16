@@ -1,4 +1,4 @@
-from behave import given, when, then  # pylint: disable=no-name-in-module
+from behave import given, when, then
 from krausening.logging import LogManager
 
 LOG_LEVEL_MAPPING = {

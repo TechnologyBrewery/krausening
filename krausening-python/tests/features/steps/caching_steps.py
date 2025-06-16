@@ -1,8 +1,7 @@
 import os
 
-from behave import given, when, then  # pylint: disable=no-name-in-module
+from behave import given, when, then
 from krausening.properties import PropertyManager
-from nose.tools import assert_equal, assert_not_equal
 from time import sleep
 
 
@@ -25,11 +24,7 @@ def the_value_of_is_changed(context):
 def subsequent_retrievals_of_the_property_file_will_reflect_the_changed_value(context):
     new_props = PropertyManager.get_instance().get_properties(context.file)
     foo_property_value = new_props["foo"]
-    assert_equal(
-        foo_property_value,
-        context.new_foo_value,
-        f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value {context.new_foo_value}",
-    )
+    assert foo_property_value == context.new_foo_value
 
 
 @given('a properties file containing property "bar" exists')
@@ -61,11 +56,7 @@ def the_value_of_is_changed_in_the_properties_file(context):
 
 @then('the value of "bar" will automatically be updated in memory')
 def the_value_of_will_automatically_be_updated_in_memory(context):
-    assert_not_equal(
-        context.properties["bar"],
-        context.initial_bar_value,
-        f"Updated value was not reflected in memory!  Initial value: {context.initial_bar_value}.  Current value: {context.properties['bar']}",
-    )
+    assert context.properties["bar"] != context.initial_bar_value
 
     with open(context.abs_file_path, "w") as prop_file:
         prop_file.write(f"bar: {context.initial_bar_value}\n")

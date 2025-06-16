@@ -16,7 +16,6 @@ dist/
 
 # Maven
 target/
-dist/
 
 # JetBrains IDE
 .idea/
@@ -53,5 +52,4 @@ Thumbs.db
 .python-version
 
 # Local Poetry configuration
-poetry.toml
 poetry.lock

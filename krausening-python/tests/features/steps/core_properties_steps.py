@@ -1,8 +1,7 @@
 import os
 
-from behave import given, when, then  # pylint: disable=no-name-in-module
+from behave import given, when, then
 from krausening.properties import PropertyManager
-from nose.tools import assert_equal
 from test_config import TestConfig
 
 
@@ -68,21 +67,13 @@ def the_test_config_is_loaded(context):
 @then('the test config retrieved value of "{key}" is "{value}"')
 def the_test_config_retrieved_value_of_is(context, key, value):
     retrieved_value = getattr(context.properties, key)
-    assert_equal(
-        retrieved_value,
-        value,
-        f"Retrieved {key} property, which is {retrieved_value}, didn't match expected value",
-    )
+    assert retrieved_value == value
 
 
 @then('the retrieved value of "{foo}" is "{bar_val}"')
 def the_retrieved_value_of_is(context, foo, bar_val):
     foo_property_value = context.properties[foo]
-    assert_equal(
-        foo_property_value,
-        bar_val,
-        f"Retrieved 'foo' property, which is {foo_property_value}, didn't match expected value",
-    )
+    assert foo_property_value == bar_val
 
 
 @given('encrypt the "foo" property value')
@@ -101,11 +92,7 @@ def decrypt_the_encrypted_property_value(context):
 
 @when('the decrypted value matches original value "bar"')
 def the_decrypted_value_matches_original_value(context):
-    assert_equal(
-        context.decrypted_value,
-        "bar",
-        f"Decrypted the encrypted property value , which is {context.decrypted_value}, didn't match expected value",
-    )
+    assert context.decrypted_value == "bar"
 
 
 @then("the value of TEST_VAR will be substituted into the value of test")
@@ -113,8 +100,4 @@ def the_value_of_test_var_will_be_substituted_into_the_value_of_test(context):
     test_value = context.properties["test"]
     substitution_exists = os.environ["TEST_VAR"] in test_value
     raw_var_does_not_exist = "${TEST_VAR}" not in test_value
-    assert_equal(
-        substitution_exists and raw_var_does_not_exist,
-        True,
-        f"Retrieved 'test' property, which is {test_value}, didn't match expected value",
-    )
+    assert substitution_exists and raw_var_does_not_exist
