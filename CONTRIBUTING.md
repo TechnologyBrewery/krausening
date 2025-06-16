@@ -5,19 +5,19 @@ This document serves to provide necessary steps and information to contribute to
 
 ## Releasing to Maven Central Repository
 
-Krausening uses both the `maven-release-plugin` and the `nexus-staging-maven-plugin` to facilitate the release and deployment of new Krausening builds. In order to perform a release, you must:
+Krausening uses both the `maven-release-plugin` and the `central-publishing-maven-plugin` to facilitate the release and deployment of new Krausening builds. In order to perform a release, you must:
 
-1. Obtain a [JIRA](https://issues.sonatype.org/secure/Dashboard.jspa) account with Sonatype OSSRH and access to the `org.technologybrewery.askllc` project group
+1. Obtain a [Sonatype Central Repository](https://central.sonatype.com/) account with access to the `org.technologybrewery` project group
 
-2. Ensure that your Sonatype OSSRH JIRA account credentials are specified in your `settings.xml`:
+2. Ensure that your Central Repository Publishing account credentials are specified in your `settings.xml`:
 
 ```xml
 <settings>
   <servers>
     <server>
-      <id>ossrh</id>
-      <username>ossrh-jira-id</username>
-      <password>{encrypted-ossrh-jira-pwd}</password>
+      <id>central</id>
+      <username>your-sonatype-id</username>
+      <password>{encrypted-sonatype-pwd}</password>
     </server>
   </servers>
 </settings>

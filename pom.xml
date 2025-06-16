@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.technologybrewery</groupId>
         <artifactId>parent</artifactId>
-        <version>10</version>
+        <version>14</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -72,7 +72,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <releaseProfiles>ossrh-release</releaseProfiles>
+                    <releaseProfiles>central-release</releaseProfiles>
                     <!-- During release preparation, Habushu will automatically update the versions of Habushu modules
                         within their pyproject.toml configurations, however the maven-release-plugin will only commit
                         updates to pom.xml files.  In order to version control both pom.xml and pyproject.toml files
@@ -82,11 +82,6 @@
                     <completionGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] :bookmark: prepare for next development iteration"</completionGoals>
                     <goals>deploy</goals>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
             </plugin>
         </plugins>
     </build>
