@@ -26,7 +26,6 @@ class FileUpdateEventHandler(FileSystemEventHandler):
         self._logger.info(f"File Watcher started on {self._base_path}")
 
     def on_modified(self, event):
-
         file_path = event.src_path.replace(self._base_path, "")
 
         ## testing for WSL since watchdog acts differently with WSL else continue as normal

@@ -7,7 +7,7 @@ from time import sleep
 
 
 @given('a properties file with property "foo" is loaded')
-def step_impl(context):
+def a_properties_file_with_property_is_loaded(context):
     os.environ["KRAUSENING_BASE"] = "tests/resources/config/"
     context.file = "test.properties"
     context.properties = PropertyManager.get_instance().get_properties(
@@ -16,13 +16,13 @@ def step_impl(context):
 
 
 @when('the value of "foo" is changed')
-def step_impl(context):
+def the_value_of_is_changed(context):
     context.new_foo_value = "new_value"
     context.properties["foo"] = context.new_foo_value
 
 
 @then("subsequent retrievals of the property file will reflect the changed value")
-def step_impl(context):
+def subsequent_retrievals_of_the_property_file_will_reflect_the_changed_value(context):
     new_props = PropertyManager.get_instance().get_properties(context.file)
     foo_property_value = new_props["foo"]
     assert_equal(
@@ -33,7 +33,7 @@ def step_impl(context):
 
 
 @given('a properties file containing property "bar" exists')
-def step_impl(context):
+def a_properties_file_containing_property_exists(context):
     os.environ["KRAUSENING_BASE"] = "tests/resources/config/"
     context.file_name = "hot_reload.properties"
     context.initial_bar_value = "some_value"
@@ -45,14 +45,14 @@ def step_impl(context):
 
 
 @given("the created properties file has been loaded")
-def step_impl(context):
+def the_created_properties_file_has_been_loaded(context):
     context.properties = PropertyManager.get_instance().get_properties(
         context.file_name, force_reload=True
     )
 
 
 @when('the value of "bar" is changed in the properties file')
-def step_impl(context):
+def the_value_of_is_changed_in_the_properties_file(context):
     with open(context.abs_file_path, "w") as prop_file:
         prop_file.write(f"bar: Now {context.initial_bar_value} WITH CHANGES!\n")
     # Sleep to give the filewatcher a chance to process the update
@@ -60,7 +60,7 @@ def step_impl(context):
 
 
 @then('the value of "bar" will automatically be updated in memory')
-def step_impl(context):
+def the_value_of_will_automatically_be_updated_in_memory(context):
     assert_not_equal(
         context.properties["bar"],
         context.initial_bar_value,

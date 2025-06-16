@@ -1,1 +1,1 @@
-from .log_manager import LogManager
+from .log_manager import LogManager as LogManager
