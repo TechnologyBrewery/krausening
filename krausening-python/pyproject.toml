@@ -3,7 +3,7 @@ repository = "https://github.com/TechnologyBrewery/krausening"
 
 [project]
 name = "krausening"
-version = "21.dev"
+version = "21"
 description = "Python implementation of Krausening"
 authors = [{name = "Eric Konieczny", email = "ekoniec1@gmail.com"}]
 license = "MIT"
