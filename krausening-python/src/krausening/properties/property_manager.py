@@ -127,6 +127,7 @@ class PropertyManager:
                 if not base.endswith("/"):
                     base = base + "/"
                 properties.load(open("{0}{1}".format(base, file_name)))
+                self._validate_property_names(properties)
             except FileNotFoundError:
                 self._logger.warn(
                     "No base file found for {0}{1}".format(base, file_name)
@@ -137,6 +138,7 @@ class PropertyManager:
                 if not extension.endswith("/"):
                     extension = extension + "/"
                 properties.load(open("{0}{1}".format(extension, file_name)))
+                self._validate_property_names(properties)
             except FileNotFoundError:
                 self._logger.warn(
                     "No extension file found for {0}{1}".format(base, file_name)
@@ -147,6 +149,7 @@ class PropertyManager:
                 if not override.endswith("/"):
                     override = override + "/"
                 properties.load(open("{0}{1}".format(override, file_name)))
+                self._validate_property_names(properties)
             except FileNotFoundError:
                 self._logger.warn(
                     "No extension file found for {0}{1}".format(base, file_name)
@@ -158,6 +161,16 @@ class PropertyManager:
 
     def is_loaded(self, file_name):
         return file_name in self._property_cache
+
+    def _validate_property_names(self, properties):
+        properties.propertyNames()
+        encryption_marked_keys = [
+            name for name in properties.propertyNames() if name.startswith("**")
+        ]
+        if len(encryption_marked_keys) > 0:
+            raise ValueError(
+                f'There are unencrypted keys in the .properties file. Follow the "Properties Encryption" instruction in the krausening-python/README to encrypt the keys: {encryption_marked_keys}'
+            )
 
 
 class Properties(JavaProperties):
@@ -226,3 +239,119 @@ class EncryptableProperties(Properties):
         password_bytes = self.__password.encode()
         decrypted_value = self.__encryptor.decrypt(value, password_bytes)
         return decrypted_value
+
+
+class PropertiesEncryptor:
+    """
+    Provide encryption support for any property key marked with encryption mark `**`
+    """
+
+    def __init__(self):
+        self._logger = LogManager.get_instance().get_logger("PropertiesEncryptor")
+        self._encryptor = PropertyEncryptor()
+        self._encryption_mark = "**"
+
+    def apply_encryption(self):
+        """
+        Apply encryption to all marked key (e.g.: **key1=value) values defined in the .properties files within the
+        `KRAUSENING_BASE`, `KRAUSENING_EXTENSIONS` and `KRAUSENING_OVERRIDE_EXTENSIONS` directories. The key's encryption
+        mark('**`) will be removed after the encryption is applied.
+        """
+        password = os.environ.get("KRAUSENING_PASSWORD", None)
+        if password is None:
+            raise ValueError(
+                "Missing environment variable `KRAUSENING_PASSWORD` for value encryption."
+            )
+
+        base = os.environ.get("KRAUSENING_BASE", None)
+        extension = os.environ.get("KRAUSENING_EXTENSIONS", None)
+        override = os.environ.get("KRAUSENING_OVERRIDE_EXTENSIONS", None)
+
+        if base is not None:
+            if not base.endswith("/"):
+                base = base + "/"
+            self._apply_encryption_from_location(base, "KRAUSENING_BASE", password)
+        else:
+            self._logger.warn(
+                "Without a KRAUSENING_BASE set, Krausening cannot load any properties!"
+            )
+
+        if extension is not None:
+            if not extension.endswith("/"):
+                extension = extension + "/"
+            self._apply_encryption_from_location(
+                extension, "KRAUSENING_EXTENSIONS", password
+            )
+        else:
+            self._logger.warn("No KRAUSENING_EXTENSIONS set..")
+
+        if override is not None:
+            if not override.endswith("/"):
+                override = override + "/"
+            self._apply_encryption_from_location(
+                override, "KRAUSENING_OVERRIDE_EXTENSIONS", password
+            )
+
+    def _apply_encryption_from_location(
+        self, location: str, location_type: str, password: str
+    ):
+        if not os.path.exists(location):
+            self._logger.warn(
+                f"{location_type} refers to a location that does not exist: {os.path.abspath(location)}"
+            )
+            return
+
+        # get all config files
+        files = []
+        for file_name in os.listdir(location):
+            full_path = os.path.join(location, file_name)
+            if os.path.isfile(full_path) and file_name.endswith(".properties"):
+                files.append(full_path)
+
+        # apply encryption to all property files
+        for file in files:
+            lines_in = []
+            try:
+                with open(file, "r") as f:
+                    lines_in = f.readlines()
+            except Exception as e:
+                self._logger.error(
+                    "Fail to read the {0} file for encryption: {1}".format(file, e)
+                )
+
+            lines_out = []
+            encryption_applied = False
+            for line_in in lines_in:
+                line = line_in.lstrip()
+                if line and line.startswith(self._encryption_mark):
+                    key = line.split("=", 1)[0]
+                    value = line.split("=", 1)[1]
+                    value = f"ENC({self._encryptor.encrypt(value, password.encode())})"
+                    line = f"{key[2:]}={value}\n"
+                    encryption_applied = True
+
+                lines_out.append(line)
+            # write to the properties file
+            if encryption_applied:
+                try:
+                    with open(file, "w") as f:
+                        for line in lines_out:
+                            f.write(line)
+                    self._logger.info(
+                        "Applied encryption to {0} {1}".format(location_type, file)
+                    )
+
+                except Exception as e:
+                    self._logger.error(
+                        "Fail to apply encryption to {0} file at: {1} with {2}".format(
+                            location_type, file, e
+                        )
+                    )
+
+
+def apply_encryption():
+    """
+    Apply secret encryption to all .properties file defined in the KRAUSENING_BASE, KRAUSENING_EXTENSIONS, KRAUSENING_OVERRIDE_EXTENSIONS
+    """
+    property_secret_encryptor = PropertiesEncryptor()
+    property_secret_encryptor.apply_encryption()

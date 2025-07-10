@@ -119,8 +119,31 @@ Frequently, it is useful to store encrypted information within properties files.
 ```properties
 KRAUSENING_PASSWORD=myMasterPassword
 ```
+2. A) Use `applyEncryption()` function to encrypt the secrets in your properties files
+     * 1- In the `.properties` file, use the `**` to mark the key for its value to be encrypted (**Note**: Krausening will not load the properties if there is any key left with the encryption mark `**`)
+   ```properties
+    # in $KRAUSENING_BASE/foo/example.properties:
+    **my.secret=X
+   
+    # in $KRAUSENING_EXTENSIONS/example.properties:
+    **my.secret=Y
+   ```
+     * 2- Call applyEncryption() function
+   ```java
+    Krausening krausening = Krausening.getInstance();
+    krausening.applyEncryption()
+   ```
+     * 3- Secrets are encrypted and encryption mark (`**`) is removed from the key
+   ```properties
+    # in $KRAUSENING_BASE/example.properties:
+    my.secret=ENC(QtHAKNIA+CNaqpdKAPopIg8n6UvEOVCRlTMrjF6ejugNKWJD2bqxEEFUbxmM/how)
+   
+    # in $KRAUSENING_EXTENSIONS/example.properties:
+    my.secret=ENC(MsXDFMLQEFLnPyDWrex25QToJA4khyXUEV0iYaWghwqP7aDp3YRGHxYTzSdEBu5R)
+   ```
 
-2. Use Jasypt to encrypt your property information with PBEWITHHMACSHA512ANDAES_256 algorithm
+
+2. B) Alternatively, you can use Jasypt to encrypt your property information with PBEWITHHMACSHA512ANDAES_256 algorithm
    
      * 1- Download the [Jasypt CLI Tools](http://www.jasypt.org/cli.html)
 
