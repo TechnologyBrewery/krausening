@@ -2,9 +2,11 @@ package org.technologybrewery.krausening;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.properties.EncryptableProperties;
+import org.jasypt.properties.PropertyValueEncryptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +15,17 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * In brewing, krausening (KROI-zen-ing) refers to adding a small amount of
@@ -55,6 +63,8 @@ public final class Krausening {
 
     /** Location of a set of classloader/war-specific extensions. */
     public static final String OVERRIDE_EXTENSIONS_LOCATION = "KRAUSENING_OVERRIDE_EXTENSIONS";
+
+    public static final String ENCRYPTION_MARK = "**";
 
     /**
      * Param for reading in the path for the subfolder within
@@ -253,10 +263,11 @@ public final class Krausening {
                             : createEmptyProperties();
                     try (Reader fileReader = new FileReader(file)) {
                         fileProperties.load(fileReader);
+                        validPropertyNames(fileProperties);
                         managedProperties.put(fileName, fileProperties);
 
                     } catch (IOException e) {
-                        LOGGER.error("Could not read the file: " + file.getAbsolutePath(), e);
+                        LOGGER.error("Could not read the file: {}", file.getAbsolutePath(), e);
 
                     }
                 }
@@ -273,14 +284,7 @@ public final class Krausening {
     private Properties createEmptyProperties() {
         Properties properties;
         if (hasMasterPassword) {
-            // TODO: could externalize this so the type is configurable:
-            StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-            encryptor.setPassword(System.getProperty(KRAUSENING_PASSWORD));
-            // Use PBEWithHMACSHA512AndAES_256 cipher algorithm for more secure encryption
-            encryptor.setAlgorithm("PBEWithHMACSHA512AndAES_256");
-            encryptor.setIvGenerator(new RandomIvGenerator());
-
-            properties = new EncryptableProperties(encryptor);
+            properties = new EncryptableProperties(getDefaultEncryptor());
 
         } else {
             properties = new Properties();
@@ -316,6 +320,110 @@ public final class Krausening {
         this.overrideExtensionSubfolder = overrideExtensionSubfolder;
     }
 
+    /**
+     * Apply encryption to all marked key (e.g.: **key1=value) values defined in the .properties files within the
+     * `KRAUSENING_BASE`, `KRAUSENING_EXTENSIONS` and `KRAUSENING_OVERRIDE_EXTENSIONS` directories. The key's encryption
+     * mark('**`) will be removed after the encryption is applied.
+     */
+    public void applyEncryption() {
+        long start = System.currentTimeMillis();
+        LOGGER.debug("Apply encryption to Krausening properties...");
 
+        validateEncryptionFoundation();
+
+        boolean hasLocations = setLocations();
+
+        if (hasLocations) {
+            // encrypt base files
+            applyEncryptionFromLocation(new File(baseLocation), BASE_LOCATION);
+
+            // encrypt extensions files
+            if (StringUtils.isNotBlank(extensionsLocation)) {
+                applyEncryptionFromLocation(new File(extensionsLocation), EXTENSIONS_LOCATION);
+            }
+
+            // encrypt override extension folder
+            String baseOverrideLocation = System.getProperty(OVERRIDE_EXTENSIONS_LOCATION);
+            if (StringUtils.isNotBlank(baseOverrideLocation)) {
+                String subfolder = StringUtils.isNotBlank(overrideExtensionSubfolder)? overrideExtensionSubfolder: "";
+                    // Get the path relative to the override extensions location
+                File overrideExtensionLocationPath = new File(baseOverrideLocation, subfolder);
+
+                applyEncryptionFromLocation(overrideExtensionLocationPath, OVERRIDE_EXTENSIONS_LOCATION);
+            }
+        }
+
+        long stop = System.currentTimeMillis();
+        LOGGER.debug("Applied Encryption to all Krausening properties in {}ms", (stop - start));
+    }
+
+    private void validateEncryptionFoundation() {
+        String masterPassword = System.getProperty(KRAUSENING_PASSWORD);
+        if (StringUtils.isBlank(masterPassword)) {
+            throw new KrauseningException("No KRAUSENING_PASSWORD set, Krausening will not support encrypted property values!");
+        }
+    }
+
+    private void applyEncryptionFromLocation(File location, String locationType) {
+        if (!location.exists()) {
+            logFileDoesNotExist(location, locationType);
+        } else {
+            File[] files = location.listFiles((FilenameFilter) new SuffixFileFilter(".properties"));
+
+            if ((files == null) || (files.length == 0)) {
+                LOGGER.warn("No files were found within: {} for encryption", location.getAbsolutePath());
+
+            } else {
+                for (File file : files) {
+                    try {
+                        boolean propertyEncrypted = false;
+                        List<String> linesReadIn = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+                        List<String> linesWriteOut = new ArrayList<>();
+                        for (String lineIn  :linesReadIn) {
+                            String line = lineIn.stripLeading();
+                            if (StringUtils.isNotBlank(line) && line.startsWith(ENCRYPTION_MARK)) {
+                                // strip encryption mark `**`
+                                String key = line.split("=", 2)[0].substring(2);
+                                String value = line.split("=", 2)[1];
+                                // encrypt value
+                                value = PropertyValueEncryptionUtils.encrypt(value ,getDefaultEncryptor());
+                                line = String.format("%s=%s",key, value);
+                                propertyEncrypted = true;
+                            }
+                            linesWriteOut.add(line);
+                        }
+
+                        if (propertyEncrypted) {
+                            Files.write(file.toPath(), linesWriteOut, StandardCharsets.UTF_8);
+                            LOGGER.info("Applied encryption to {} {}", locationType, file);
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error("Fail to apply encryption to {} file at: {} with {}", locationType, file, e);
+                    }
+                }
+            }
+        }
+    }
+
+    private StringEncryptor getDefaultEncryptor() {
+        // TODO: could externalize this so the type is configurable:
+        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+        encryptor.setPassword(System.getProperty(KRAUSENING_PASSWORD));
+        // Use PBEWithHMACSHA512AndAES_256 cipher algorithm for more secure encryption
+        encryptor.setAlgorithm("PBEWithHMACSHA512AndAES_256");
+        encryptor.setIvGenerator(new RandomIvGenerator());
+
+        return encryptor;
+    }
+
+    private void validPropertyNames(Properties properties) {
+        Set<String> encryptionMarkedKeys = properties.stringPropertyNames().stream()
+                .filter(s -> s.startsWith(ENCRYPTION_MARK))
+                .collect(Collectors.toSet());
+
+        if (encryptionMarkedKeys.size() > 0) {
+            throw new KrauseningException("There are unencrypted keys in the .properties file. Follow the \"Krausening in Four Pints (Leveraging Jasypt for Encrypting/Decrypting Properties)\" instruction in the krausening/README to encrypt the keys: " + encryptionMarkedKeys);
+        }
+    }
 
 }

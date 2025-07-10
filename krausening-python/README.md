@@ -61,6 +61,47 @@ class TestConfig():
     def reload(self):
         self.properties = PropertyManager.get_instance().get_properties('test.properties')
 ```
+### Properties Encryption
+
+Frequently, it is useful to store encrypted information within properties files.  Krausening optionally leverages Jasypt to allow stored properties to be encrypted at rest while also decrypting property values as they are read without manual interaction.
+
+1.  set KRAUSENING_PASSWORD to point to your Jasypt master encryption password.
+```properties
+KRAUSENING_PASSWORD=myMasterPassword
+```
+2. A) Use `apply_encryption()` function to encrypt the secrets in your properties files
+    * 1- In the `.properties` file, use the `**` to mark the key for its value to be encrypted (**Note**: Krausening will not load the properties if there is any key left with the encryption mark `**`)
+   ```properties
+    # in $KRAUSENING_BASE/foo/example.properties:
+    **my.secret=X
+   
+    # in $KRAUSENING_EXTENSIONS/example.properties:
+    **my.secret=Y
+   ```
+    * 2- Call applyEncryption() function
+   ```python
+   #import apply_encryption function
+   from krausening.properties import apply_encryption 
+   
+   # call apply_encryption function
+   apply_encryption()
+   ```
+    * 3- Secrets are encrypted and encryption mark (`**`) is removed from the key
+   ```properties
+    # in $KRAUSENING_BASE/example.properties:
+    my.secret=ENC(QtHAKNIA+CNaqpdKAPopIg8n6UvEOVCRlTMrjF6ejugNKWJD2bqxEEFUbxmM/how)
+   
+    # in $KRAUSENING_EXTENSIONS/example.properties:
+    my.secret=ENC(MsXDFMLQEFLnPyDWrex25QToJA4khyXUEV0iYaWghwqP7aDp3YRGHxYTzSdEBu5R)
+   ```
+2. B) Alternatively, you can manually encrypt the secret. Ref: [Krausening in Four Pints (Leveraging Jasypt for Encrypting/Decrypting Properties) - 2. B)](../krausening/README.md#krausening-in-four-pints-leveraging-jasypt-for-encryptingdecrypting-properties)
+3. When you look for your property, you'll now get the decrypted value:
+   ```python
+   propertyManager = PropertyManager.get_instance()
+   properties = propertyManager.get_properties('example.properties')
+   assert "Y" == properties.getProperty("my.secret")
+   ```
+
 ## Releasing to PyPI
 
 Releasing Krausening Python integrates into the project's larger utilization of the `maven-release-plugin`, specifically publishing the package to PyPI during the `deploy` phase.  A [PyPI account](https://pypi.org/account/register/) with access to the [krausening](https://pypi.org/project/krausening/) project is required. PyPI account credentials should be specified in your `settings.xml` under the `<id>pypi</id>` `<server>` entry:
