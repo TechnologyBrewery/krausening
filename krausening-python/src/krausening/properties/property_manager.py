@@ -44,7 +44,7 @@ class FileUpdateEventHandler(FileSystemEventHandler):
                 file_path = file_path[1:]
 
         if PropertyManager.get_instance().is_loaded(file_path):
-            self._logger.warn(
+            self._logger.warning(
                 f"Detected a file update in {event.src_path}!  Triggering update..."
             )
             PropertyManager.get_instance().get_properties(file_path, force_reload=True)
@@ -129,7 +129,7 @@ class PropertyManager:
                 properties.load(open("{0}{1}".format(base, file_name)))
                 self._validate_property_names(properties)
             except FileNotFoundError:
-                self._logger.warn(
+                self._logger.warning(
                     "No base file found for {0}{1}".format(base, file_name)
                 )
 
@@ -140,7 +140,7 @@ class PropertyManager:
                 properties.load(open("{0}{1}".format(extension, file_name)))
                 self._validate_property_names(properties)
             except FileNotFoundError:
-                self._logger.warn(
+                self._logger.warning(
                     "No extension file found for {0}{1}".format(base, file_name)
                 )
 
@@ -151,7 +151,7 @@ class PropertyManager:
                 properties.load(open("{0}{1}".format(override, file_name)))
                 self._validate_property_names(properties)
             except FileNotFoundError:
-                self._logger.warn(
+                self._logger.warning(
                     "No extension file found for {0}{1}".format(base, file_name)
                 )
 
@@ -272,7 +272,7 @@ class PropertiesEncryptor:
                 base = base + "/"
             self._apply_encryption_from_location(base, "KRAUSENING_BASE", password)
         else:
-            self._logger.warn(
+            self._logger.warning(
                 "Without a KRAUSENING_BASE set, Krausening cannot load any properties!"
             )
 
@@ -283,7 +283,7 @@ class PropertiesEncryptor:
                 extension, "KRAUSENING_EXTENSIONS", password
             )
         else:
-            self._logger.warn("No KRAUSENING_EXTENSIONS set..")
+            self._logger.warning("No KRAUSENING_EXTENSIONS set..")
 
         if override is not None:
             if not override.endswith("/"):
@@ -296,7 +296,7 @@ class PropertiesEncryptor:
         self, location: str, location_type: str, password: str
     ):
         if not os.path.exists(location):
-            self._logger.warn(
+            self._logger.warning(
                 f"{location_type} refers to a location that does not exist: {os.path.abspath(location)}"
             )
             return
@@ -320,33 +320,43 @@ class PropertiesEncryptor:
                 )
 
             lines_out = []
-            encryption_applied = False
+            encrypted_keys = []
             for line_in in lines_in:
+                # Would be nice to preserve their spacing
                 line = line_in.lstrip()
-                if line and line.startswith(self._encryption_mark):
-                    key = line.split("=", 1)[0]
-                    value = line.split("=", 1)[1]
-                    value = f"ENC({self._encryptor.encrypt(value, password.encode())})"
-                    line = f"{key[2:]}={value}\n"
-                    encryption_applied = True
+                if self._should_encrypt(line):
+                    key, value = self._parse_property(line)
+                    # Java Properties ignores whitespace before values so remove, but preserve trailing whitespace
+                    value = f"ENC({self._encryptor.encrypt(value.lstrip(), password.encode())})"
+                    line = f"{key}={value}\n"
+                    encrypted_keys.append(key)
 
                 lines_out.append(line)
             # write to the properties file
-            if encryption_applied:
+            if encrypted_keys:
                 try:
                     with open(file, "w") as f:
                         for line in lines_out:
                             f.write(line)
                     self._logger.info(
-                        "Applied encryption to {0} {1}".format(location_type, file)
+                        f"Applied encryption to {location_type} {file} for keys: {encrypted_keys}"
                     )
 
                 except Exception as e:
                     self._logger.error(
-                        "Fail to apply encryption to {0} file at: {1} with {2}".format(
-                            location_type, file, e
-                        )
+                        f"Fail to apply encryption to {location_type} file at: {file} with {e}"
                     )
+
+    def _should_encrypt(self, line):
+        return line and line.startswith(self._encryption_mark)
+
+    def _parse_property(self, line):
+        marklen = len(self._encryption_mark)
+        # breaks if name contains escaped =, or uses : as separator
+        split = line.split("=", 1)
+        key = split[0][marklen:]
+        value = split[1]
+        return key, value
 
 
 def apply_encryption():
