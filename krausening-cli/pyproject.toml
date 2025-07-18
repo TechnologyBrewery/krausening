@@ -2,10 +2,13 @@
 repository = "https://github.com/TechnologyBrewery/krausening"
 
 [project]
-name = "krausening"
+name = "krausening-cli"
 version = "22.dev"
-description = "Python implementation of Krausening"
-authors = [{name = "Eric Konieczny", email = "ekoniec1@gmail.com"}]
+description = "Command-line utility to help use Krausening."
+authors = [
+    {name = "Chaoyi Sun"},
+    {name = "Emily Wilkins"}
+]
 license = "MIT"
 requires-python = ">=3.10"
 dynamic = ["version", "dependencies"]
@@ -14,15 +17,17 @@ readme = "README.md"
 keywords = ["properties", "configuration-management"]
 
 [tool.poetry.dependencies]
-javaproperties = [{version = ">=0.8.1", python = ">=3.8,<4.0"}]
-cryptography = ">=42.0.0"
-watchdog = ">=2.1.9"
+krausening = {path = "../krausening-python", develop = true}
+click = ">=8.2.1"
+
+[project.scripts]
+krausening = "krausening_cli.cli:krausening"
 
 [tool.poetry.group.dev.dependencies]
 behave = ">=1.2.6"
-pytest = ">=8.3.5"
-kappa-maki = ">=1.0.2"
-ruff = ">=0.11.13"
+ruff = "^0.12.4"
+kappa-maki = "^1.0.2"
+assertpy = "^1.1"
 
 [build-system]
 requires = ["poetry-core>=1.6.0"]

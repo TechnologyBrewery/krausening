@@ -53,3 +53,4 @@ Thumbs.db
 
 # Local Poetry configuration
 poetry.lock
+!krausening-cli/poetry.lock

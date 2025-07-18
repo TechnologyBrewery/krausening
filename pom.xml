@@ -53,6 +53,7 @@
     <modules>
         <module>krausening</module>
         <module>krausening-python</module>
+        <module>krausening-cli</module>
     </modules>
 
     <build>
@@ -61,8 +62,11 @@
                 <plugin>
                     <groupId>org.technologybrewery.habushu</groupId>
                     <artifactId>habushu-maven-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.1</version>
                     <extensions>true</extensions>
+                    <configuration>
+                        <pythonVersion>${version.python.default}</pythonVersion>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

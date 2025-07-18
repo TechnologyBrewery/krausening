@@ -25,12 +25,11 @@ For [Krausening Python](https://github.com/TechnologyBrewery/krausening/tree/dev
 
 # Krausening and Java
 
-See the [krausening README](https://github.com/TechnologyBrewery/krausening/tree/dev/krausening/) for more details.
-
+See the [krausening README](krausening/README.md) for more details.
 
 # Krausening and Python
 
-See the [krausening-python README](https://github.com/TechnologyBrewery/krausening/tree/dev/krausening-python/) for more details.
+See the [krausening-python README](krausening-python/README.md) for more details.
 
 # Contributions
-See the CONTRIBUTING.md file in the Krausening root directory for release instructions.
+See the [CONTRIBUTING.md](CONTRIBUTING.md) file in the Krausening root directory for release instructions.

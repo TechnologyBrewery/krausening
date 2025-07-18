@@ -7,11 +7,11 @@
         <version>22-SNAPSHOT</version>
     </parent>
 
-    <name>Krausening::Krausening Python</name>
-    <description>The Python implementation of Krausening</description>
+    <name>Krausening::Krausening CLI</name>
+    <description>A command-line interface for manipulating properties files for use with Krausening</description>
     <packaging>habushu</packaging>
 
-    <artifactId>krausening-python</artifactId>
+    <artifactId>krausening-cli</artifactId>
 
     <build>
         <plugins>
@@ -22,4 +22,12 @@
         </plugins>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.technologybrewery.krausening</groupId>
+            <artifactId>krausening-python</artifactId>
+            <version>${project.version}</version>
+            <type>habushu</type>
+        </dependency>
+    </dependencies>
 </project>

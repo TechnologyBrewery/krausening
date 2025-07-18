@@ -5,7 +5,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/krausening?logo=python&logoColor=gold)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/krausening?color=blue&label=Installs&logo=pypi&logoColor=gold)](https://pypi.org/project/krausening/)
 
-Krausening property management and encryption for Python is packaged using the open-source Python Maven plugin [Habushu](https://bitbucket.org/cpointe/habushu) and made available as a [PyPI package](https://pypi.org/project/krausening/).  
+Krausening property management and encryption for Python is packaged using the open-source Python Maven plugin [Habushu](https://github.com/TechnologyBrewery/habushu) and made available as a [PyPI package](https://pypi.org/project/krausening/).  
 
 ## Distribution Channel
 
@@ -61,59 +61,53 @@ class TestConfig():
     def reload(self):
         self.properties = PropertyManager.get_instance().get_properties('test.properties')
 ```
-### Properties Encryption
+### Using Encrypted Properties
 
-Frequently, it is useful to store encrypted information within properties files.  Krausening optionally leverages Jasypt to allow stored properties to be encrypted at rest while also decrypting property values as they are read without manual interaction.
+Frequently, it is useful to store encrypted information within properties files.  Krausening optionally leverages Jasypt
+to allow stored properties to be encrypted at rest while also decrypting property values as they are read without manual
+interaction.
 
-1.  set KRAUSENING_PASSWORD to point to your Jasypt master encryption password.
-```properties
-KRAUSENING_PASSWORD=myMasterPassword
-```
-2. A) Use `apply_encryption()` function to encrypt the secrets in your properties files
-    * 1- In the `.properties` file, use the `**` to mark the key for its value to be encrypted (**Note**: Krausening will not load the properties if there is any key left with the encryption mark `**`)
+### 1. Encrypting Properties
+
+#### Krausening CLI
+
+The simplest way to encrypt your secrets for Krausening is to use the [Krausening CLI](https://pypi.org/project/krausening-cli)
+`encrypt files` command.
+
+#### Interactive Python Environment
+
+If you're already using Krausening within an interactive Python environment, like a Jupyter Notebook, you can directly
+call the same encryption function that the CLI uses!
+
+1. In your `.properties` files, mark any properties you want encrypted by prefixing the key with `**`.
    ```properties
-    # in $KRAUSENING_BASE/foo/example.properties:
-    **my.secret=X
-   
-    # in $KRAUSENING_EXTENSIONS/example.properties:
-    **my.secret=Y
+    **my.secret=someStrongPassword
    ```
-    * 2- Call applyEncryption() function
+2. Set the environment variable KRAUSENING_PASSWORD to point to your encryption password.
    ```python
-   #import apply_encryption function
-   from krausening.properties import apply_encryption 
-   
-   # call apply_encryption function
+   import os
+   os.environ['KRAUSENING_PASSWORD']='myEncryptPassword'
+   ```
+3. Call applyEncryption() function
+   ```python
+   from krausening import apply_encryption 
    apply_encryption()
    ```
-    * 3- Secrets are encrypted and encryption mark (`**`) is removed from the key
+4. Across all properties files in the base, extensions, and overrides directories; properties
+   marked for encryption are updated with their encrypted value, and the marker is removed from the key.
    ```properties
-    # in $KRAUSENING_BASE/example.properties:
-    my.secret=ENC(QtHAKNIA+CNaqpdKAPopIg8n6UvEOVCRlTMrjF6ejugNKWJD2bqxEEFUbxmM/how)
-   
-    # in $KRAUSENING_EXTENSIONS/example.properties:
-    my.secret=ENC(MsXDFMLQEFLnPyDWrex25QToJA4khyXUEV0iYaWghwqP7aDp3YRGHxYTzSdEBu5R)
+   my.secret=ENC(QtHAKNIA+CNaqpdKAPopIg8n6UvEOVCRlTMrjF6ejugNKWJD2bqxEEFUbxmM/how)
    ```
-2. B) Alternatively, you can manually encrypt the secret. Ref: [Krausening in Four Pints (Leveraging Jasypt for Encrypting/Decrypting Properties) - 2. B)](../krausening/README.md#krausening-in-four-pints-leveraging-jasypt-for-encryptingdecrypting-properties)
-3. When you look for your property, you'll now get the decrypted value:
+
+### 2. Decrypting Properties
+
+1. set KRAUSENING_PASSWORD to point to your encryption password.
+   ```properties
+   KRAUSENING_PASSWORD=myEncryptPassword
+   ```
+2. When you look for your property, you'll now get the decrypted value:
    ```python
    propertyManager = PropertyManager.get_instance()
    properties = propertyManager.get_properties('example.properties')
-   assert "Y" == properties.getProperty("my.secret")
+   assert "someStrongPassword" == properties.getProperty("my.secret")
    ```
-
-## Releasing to PyPI
-
-Releasing Krausening Python integrates into the project's larger utilization of the `maven-release-plugin`, specifically publishing the package to PyPI during the `deploy` phase.  A [PyPI account](https://pypi.org/account/register/) with access to the [krausening](https://pypi.org/project/krausening/) project is required. PyPI account credentials should be specified in your `settings.xml` under the `<id>pypi</id>` `<server>` entry:
-
-```xml
-<settings>
-  <servers>
-    <server>
-      <id>pypi</id>
-      <username>pypi-username</username>
-      <password>pypi-password</password>
-    </server>
-  </servers>
-</settings>
-```
